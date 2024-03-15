@@ -35,7 +35,7 @@ A documentação do projeto, incluindo a especificação de requisitos, diagrama
 # Contribuição
 Contribuições são bem-vindas! Abra um Pull Request com melhorias, correções de bugs ou novas funcionalidades.
 
-Autores
-Emily Zanivan Dallazen
-Felipe Nerling
-Matheus Anhaya Marmett
+Autores:
+Emily Zanivan Dallazen,
+Felipe Nerling,
+Matheus Anhaya Marmett.
