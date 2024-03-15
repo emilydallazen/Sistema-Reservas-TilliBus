@@ -21,7 +21,7 @@ Outros Requisitos: Qualquer outro requisito ou configuração necessária para e
 Instalação e Execução
 Clone este repositório em sua máquina local utilizando o comando:
 
-git clone https://github.com/seu-usuario/nome-do-repositorio.git
+git clone https://github.com/emilydallazen/Sistema-Reservas-TilliBus
 
 # Estrutura do Projeto
 O projeto está estruturado da seguinte forma:
