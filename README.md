@@ -6,12 +6,12 @@ O objetivo do projeto é criar um sistema de gestão para o estabelecimento Till
 # Funcionalidades
 O sistema desenvolvido pretende contemplar as seguintes funcionalidades:
 
-Cadastro e gerenciamento de clientes
-Reservas de hospedagem
-Faturamento e controle financeiro
-Relatórios de ocupação e desempenho
-Gerenciamento de estoque 
-Entre outros
+- Cadastro e gerenciamento de clientes
+- Reservas de hospedagem
+- Faturamento e controle financeiro
+- Relatórios de ocupação e desempenho
+- Gerenciamento de estoque 
+Entre outros.
 
 Para executar o sistema em seu ambiente local, é necessário ter instalado:
 
