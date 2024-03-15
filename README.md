@@ -15,10 +15,11 @@ Entre outros.
 
 Para executar o sistema em seu ambiente local, é necessário ter instalado:
 
-Ambiente de Desenvolvimento: Linguagem de Programação utilizada, bibliotecas necessárias, IDE preferencialmente utilizada.
-Banco de Dados: Sistema de gerenciamento de banco de dados (SGBD) utilizado, versão do banco de dados.
-Outros Requisitos: Qualquer outro requisito ou configuração necessária para execução do projeto.
-Instalação e Execução
+- Ambiente de Desenvolvimento: Linguagem de Programação utilizada, bibliotecas necessárias, IDE preferencialmente utilizada.
+- Banco de Dados: Sistema de gerenciamento de banco de dados (SGBD) utilizado, versão do banco de dados.
+- Outros Requisitos: Qualquer outro requisito ou configuração necessária para execução do projeto.
+
+#Instalação e Execução
 Clone este repositório em sua máquina local utilizando o comando:
 
 git clone https://github.com/emilydallazen/Sistema-Reservas-TilliBus
@@ -26,10 +27,11 @@ git clone https://github.com/emilydallazen/Sistema-Reservas-TilliBus
 # Estrutura do Projeto
 O projeto está estruturado da seguinte forma:
 
-src/: Contém o código-fonte do sistema.
-database/: Contém os arquivos de modelagem e scripts do banco de dados.
-docs/: Documentação do projeto.
-Documentação
+- src/: Contém o código-fonte do sistema.
+- database/: Contém os arquivos de modelagem e scripts do banco de dados.
+- docs/: Documentação do projeto.
+- 
+# Documentação
 A documentação do projeto, incluindo a especificação de requisitos, diagramas de arquitetura, e manuais de uso, pode ser encontrada na pasta docs/.
 
 # Contribuição
