@@ -13,18 +13,13 @@ O sistema desenvolvido pretende contemplar as seguintes funcionalidades:
 - Gerenciamento de estoque 
 Entre outros.
 
-# Instalação e Execução
-Clone este repositório em sua máquina local utilizando o comando:
-
-git clone https://github.com/emilydallazen/Sistema-Reservas-TilliBus
-
 # Estrutura do Projeto
 O projeto está estruturado da seguinte forma:
 
 - src/: Contém o código-fonte do sistema.
 - database/: Contém os arquivos de modelagem e scripts do banco de dados.
 - docs/: Documentação do projeto.
-- 
+  
 # Documentação
 A documentação do projeto, incluindo a especificação de requisitos, diagramas de arquitetura, e manuais de uso, pode ser encontrada na pasta docs/.
 
