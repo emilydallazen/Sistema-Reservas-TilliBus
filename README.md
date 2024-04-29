@@ -13,12 +13,6 @@ O sistema desenvolvido pretende contemplar as seguintes funcionalidades:
 - Gerenciamento de estoque 
 Entre outros.
 
-Para executar o sistema em seu ambiente local, é necessário ter instalado:
-
-- Ambiente de Desenvolvimento: Linguagem de Programação utilizada, bibliotecas necessárias, IDE preferencialmente utilizada.
-- Banco de Dados: Sistema de gerenciamento de banco de dados (SGBD) utilizado, versão do banco de dados.
-- Outros Requisitos: Qualquer outro requisito ou configuração necessária para execução do projeto.
-
 # Instalação e Execução
 Clone este repositório em sua máquina local utilizando o comando:
 
@@ -38,6 +32,6 @@ A documentação do projeto, incluindo a especificação de requisitos, diagrama
 Contribuições são bem-vindas! Abra um Pull Request com melhorias, correções de bugs ou novas funcionalidades.
 
 Autores:
-Emily Zanivan Dallazen,
-Felipe Nerling,
-Matheus Anhaya Marmett.
+Emily Zanivan Dallazen - 2221101066,
+Felipe Nerling - 2221101003,
+Matheus Anhaya Marmett - 2221101016.
