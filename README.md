@@ -28,5 +28,5 @@ Contribuições são bem-vindas! Abra um Pull Request com melhorias, correções
 
 Autores:
 Emily Zanivan Dallazen - 2221101066,
-Felipe Nerling - 2221101003,
+Felipe Daniel Nerling - 2221101003,
 Matheus Anhaya Marmett - 2221101016.
