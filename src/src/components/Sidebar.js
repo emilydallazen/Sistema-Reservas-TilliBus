@@ -1,7 +1,7 @@
 // src/components/Sidebar.js
 import React from 'react';
 import { Drawer, List, ListItem, ListItemIcon, ListItemText, Box, IconButton } from '@mui/material';
-import { Home as HomeIcon, People as UsersIcon, Settings as SettingsIcon, CalendarToday as CalendarIcon, ChevronLeft, ChevronRight } from '@mui/icons-material';
+import { Assessment as AssessmentIcon, AttachMoney as AttachMoneyIcon, Settings as SettingsIcon, CalendarToday as CalendarIcon, ChevronLeft, ChevronRight, Create as CreateIcon } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
 
@@ -14,10 +14,10 @@ const Sidebar = ({ open, handleDrawerClose }) => {
       anchor="left"
       open={open}
       sx={{
-        width: 240,
+        width: 0,
         flexShrink: 0,
         '& .MuiDrawer-paper': {
-          width: 240,
+          width: 190,
           boxSizing: 'border-box',
           backgroundColor: theme.palette.primary.main,
           color: '#fff',
@@ -30,21 +30,25 @@ const Sidebar = ({ open, handleDrawerClose }) => {
         </IconButton>
       </Box>
       <List>
-        <ListItem button component={Link} to="/">
-          <ListItemIcon sx={{ color: '#fff' }}><HomeIcon /></ListItemIcon>
-          <ListItemText primary="Dashboard" />
-        </ListItem>
-        <ListItem button component={Link} to="/users">
-          <ListItemIcon sx={{ color: '#fff' }}><UsersIcon /></ListItemIcon>
-          <ListItemText primary="Users" />
-        </ListItem>
-        <ListItem button component={Link} to="/settings">
-          <ListItemIcon sx={{ color: '#fff' }}><SettingsIcon /></ListItemIcon>
-          <ListItemText primary="Settings" />
-        </ListItem>
-        <ListItem button component={Link} to="/calendar"> {/* Nova opção de Agenda */}
+        <ListItem button component={Link} to="/Agenda">
           <ListItemIcon sx={{ color: '#fff' }}><CalendarIcon /></ListItemIcon>
           <ListItemText primary="Agenda" />
+        </ListItem>
+        <ListItem button component={Link} to="/Cadastros">
+          <ListItemIcon sx={{ color: '#fff' }}><CreateIcon /></ListItemIcon>
+          <ListItemText primary="Cadastros" />
+        </ListItem>
+        <ListItem button component={Link} to="/Financeiro">
+          <ListItemIcon sx={{ color: '#fff' }}><AttachMoneyIcon /></ListItemIcon>
+          <ListItemText primary="Financeiro" />
+        </ListItem>
+        <ListItem button component={Link} to="/Dashboard">
+          <ListItemIcon sx={{ color: '#fff' }}><AssessmentIcon /></ListItemIcon>
+          <ListItemText primary="Dashboard" />
+        </ListItem>
+        <ListItem button component={Link} to="/Config">
+          <ListItemIcon sx={{ color: '#fff' }}><SettingsIcon /></ListItemIcon>
+          <ListItemText primary="Configurações" />
         </ListItem>
       </List>
     </Drawer>

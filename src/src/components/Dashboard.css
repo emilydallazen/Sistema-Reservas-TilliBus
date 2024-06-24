@@ -1,0 +1,168 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  .container {
+    display: flex;
+    height: 100vh;
+  }
+  
+  .sidebar {
+    width: 200px;
+    background-color: #ccc;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .sidebar .logo img {
+    width: 100%;
+  }
+  
+  .sidebar nav ul {
+    list-style-type: none;
+    padding: 0;
+    width: 100%;
+  }
+  
+  .sidebar nav ul li {
+    padding: 10px;
+    margin: 10px 0;
+    background-color: #ccc;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  .sidebar nav ul li:hover {
+    background-color: #ccc;
+  }
+  
+  .content {
+    flex: 1;
+    padding: 20px;
+  }
+  
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #ccc;
+    padding-bottom: 10px;
+  }
+  
+  header h1 {
+    margin: 0;
+  }
+  
+  .user-profile img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+  
+  .dashboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .date-range {
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+  }
+  
+  .date-range div {
+    margin: 0 10px;
+  }
+  
+  .date-range input {
+    background-color: #ccc;
+    padding: 10px;
+    border: 2px solid #3b6e4e;
+    border-radius: 5px;
+  }
+  
+  .totals {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    margin: 20px 0;
+    
+  }
+  
+  .total {
+    background-color: #ccc;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    color: black;
+    border: 2px solid #3b6e4e;
+  }
+  
+  .total h2 {
+    margin: 0 0 10px 0;
+  }
+  
+  .tipos-pagamento {
+    background-color: #ccc;
+    padding: 20px;
+    border-radius: 10px;
+    color: black;
+    text-align: left;
+    width: 40%;
+    margin: 20px 0;
+    border: 2px solid #3b6e4e;
+    
+  }
+  
+  .payment-types h3 {
+    margin-top: 0;
+  }
+  
+  .payment-types ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .payment-types ul li {
+    margin: 5px 0;
+  }
+  
+  .entries, .exits {
+    width: 45%;
+    background-color: #3b6e4e;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 10px 0;
+  }
+  
+  .entries table, .exits table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .entries th, .entries td, .exits th, .exits td {
+    border: 2px solid #3b6e4e;
+    padding: 20px;
+    text-align: left;
+  }
+  
+  .entries th, .exits th {
+    background-color: #ccc;
+  }
+  
+  .entry-header {
+    background-color: #ccc;
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+  

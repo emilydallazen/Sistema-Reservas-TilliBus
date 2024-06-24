@@ -8,7 +8,7 @@ import LoginPage from './pages/LoginPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
-import MyCalendar from './components/MyCalendar'; // Importe o MyCalendar
+import MyCalendar from './components/MyCalendar'; 
 
 function App() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(true);
@@ -27,24 +27,27 @@ function App() {
           <Toolbar />
           <Routes>
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/" element={
+            <Route path="/Agenda" element={
               <ProtectedRoute>
-                <Dashboard />
+                <MyCalendar />
               </ProtectedRoute>
             } />
-            <Route path="/users" element={
+            
+            <Route path="/Cadastros" element={
               <ProtectedRoute>
                 <Users />
               </ProtectedRoute>
             } />
-            <Route path="/settings" element={
-              <ProtectedRoute>
-                <Settings />
+            
+            <Route path="/Dashboard" element={
+              <ProtectedRoute> 
+                <Dashboard />
               </ProtectedRoute>
             } />
-            <Route path="/calendar" element={ // Nova rota para a agenda
+
+            <Route path="/Config" element={
               <ProtectedRoute>
-                <MyCalendar />
+                <Settings />
               </ProtectedRoute>
             } />
           </Routes>

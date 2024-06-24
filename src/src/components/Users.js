@@ -12,7 +12,7 @@ const Users = () => {
         <Sidebar />
         <Container>
           <h1>Users</h1>
-          <p>Manage your users here.</p>
+          <p>Aqui será a aba de cadastros.</p>
         </Container>
       </Box>
     </div>

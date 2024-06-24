@@ -22,7 +22,7 @@ const Navbar = ({ toggleDrawer, isDrawerOpen }) => {
           Sistema Admin
         </Typography>
         <IconButton color="inherit">
-          <AccountCircle />
+          <AccountCircle/>
         </IconButton>
       </Toolbar>
     </AppBar>

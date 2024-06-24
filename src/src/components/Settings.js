@@ -11,8 +11,8 @@ const Settings = () => {
       <Box display="flex">
         <Sidebar />
         <Container>
-          <h1>Settings</h1>
-          <p>Configure your settings here.</p>
+          <h1>Configurações</h1>
+          <p>Aqui será o menu para algumas configurações.</p>
         </Container>
       </Box>
     </div>
