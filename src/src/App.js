@@ -9,6 +9,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import MyCalendar from './components/MyCalendar'; 
+import Financeiro from './components/Financeiro'; 
 
 function App() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(true);
@@ -48,6 +49,12 @@ function App() {
             <Route path="/Config" element={
               <ProtectedRoute>
                 <Settings />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/Financeiro" element={
+              <ProtectedRoute>
+                <Financeiro />
               </ProtectedRoute>
             } />
           </Routes>

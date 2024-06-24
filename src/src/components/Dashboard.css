@@ -12,7 +12,7 @@ body {
   
   .sidebar {
     width: 200px;
-    background-color: #ccc;
+    background-color: #FAF9F6;
     padding: 20px;
     display: flex;
     flex-direction: column;
@@ -32,14 +32,14 @@ body {
   .sidebar nav ul li {
     padding: 10px;
     margin: 10px 0;
-    background-color: #ccc;
+    background-color: #FAF9F6;
     text-align: center;
     cursor: pointer;
     border-radius: 5px;
   }
   
   .sidebar nav ul li:hover {
-    background-color: #ccc;
+    background-color: #FAF9F6;
   }
   
   .content {
@@ -51,7 +51,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 2px solid #ccc;
+    border-bottom: 2px solid #FAF9F6;
     padding-bottom: 10px;
   }
   
@@ -82,9 +82,9 @@ body {
   }
   
   .date-range input {
-    background-color: #ccc;
+    background-color: #FAF9F6;
     padding: 10px;
-    border: 2px solid #3b6e4e;
+    border: 2px solid #1A262F;
     border-radius: 5px;
   }
   
@@ -96,13 +96,29 @@ body {
     
   }
   
-  .total {
-    background-color: #ccc;
+  .totalentries {
+    background-color: #FAF9F6;
     padding: 20px;
     border-radius: 10px;
     text-align: center;
     color: black;
     border: 2px solid #3b6e4e;
+  }
+  .totalexits {
+    background-color: #FAF9F6;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    color: black;
+    border: 2px solid #8a4545;
+  }
+  .totalsaldo {
+    background-color: #FAF9F6;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    color: black;
+    border: 2px solid #e3b36f;
   }
   
   .total h2 {
@@ -110,14 +126,14 @@ body {
   }
   
   .tipos-pagamento {
-    background-color: #ccc;
+    background-color: #FAF9F6;
     padding: 20px;
     border-radius: 10px;
     color: black;
     text-align: left;
     width: 40%;
     margin: 20px 0;
-    border: 2px solid #3b6e4e;
+    border: 2px solid #000000;
     
   }
   
@@ -134,9 +150,16 @@ body {
     margin: 5px 0;
   }
   
-  .entries, .exits {
+  .entries{
     width: 45%;
-    background-color: #3b6e4e;
+    background-color: #6c8c78;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 10px 0;
+  }
+  .exits {
+    width: 45%;
+    background-color: #a35d5d;
     padding: 20px;
     border-radius: 10px;
     margin: 10px 0;
@@ -147,18 +170,23 @@ body {
     border-collapse: collapse;
   }
   
-  .entries th, .entries td, .exits th, .exits td {
+  .entries th, .entries td {
     border: 2px solid #3b6e4e;
+    padding: 20px;
+    text-align: left;
+  }
+  .exits th, .exits td {
+    border: 2px solid #8a4545;
     padding: 20px;
     text-align: left;
   }
   
   .entries th, .exits th {
-    background-color: #ccc;
+    background-color: #FAF9F6;
   }
   
   .entry-header {
-    background-color: #ccc;
+    background-color: #e8e1d9;
     padding: 10px;
     border-radius: 10px;
     text-align: center;

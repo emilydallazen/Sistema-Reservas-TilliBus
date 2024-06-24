@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Typography, Box, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Container, Typography, Box, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button } from '@mui/material';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -20,28 +20,31 @@ const Dashboard = () => {
               <Typography component="label" htmlFor="end-date">Data Final: </Typography>
               <input type="date" id="end-date" placeholder="00/00/0000" />
             </Box>
+            <Box mx={1}>
+              <Button variant="contained" color="primary">PESQUISAR</Button>
+            </Box>
           </Box>
           <Grid container spacing={2} className="totals">
             <Grid item xs={12} md={4}>
-              <Paper className="total">
+              <Paper className="totalentries">
                 <Typography variant="h6">Entradas - Total</Typography>
                 <Typography>R$0,00</Typography>
               </Paper>
             </Grid>
             <Grid item xs={12} md={4}>
-              <Paper className="total">
+              <Paper className="totalexits">
                 <Typography variant="h6">Saídas - Total</Typography>
                 <Typography>R$0,00</Typography>
               </Paper>
             </Grid>
             <Grid item xs={12} md={4}>
-              <Paper className="total">
+              <Paper className="totalsaldo">
                 <Typography variant="h6">Saldo</Typography>
                 <Typography>R$0,00</Typography>
               </Paper>
             </Grid>
           </Grid>
-          <Box className="tipos-pagamento" width ="30%"my={2} p={2} borderRadius={2} bgcolor="primary.main" color="primary.contrastText" sx={{ marginLeft: 'left' }}>
+          <Box className="tipos-pagamento" width="30%" my={2} p={2} borderRadius={2} bgcolor="primary.main" color="primary.contrastText">
             <Typography variant="h6">Tipos de Pagamento</Typography>
             <ul>
               <li>Dinheiro: R$0,00</li>

@@ -1,0 +1,17 @@
+.financeiro-container {
+    padding-top: 20px;
+  }
+  
+  .controls {
+    margin-bottom: 20px;
+  }
+  
+  .date-range {
+    display: flex;
+    align-items: center;
+  }
+  
+  .date-range input {
+    margin: 0 10px;
+  }
+  

@@ -4,13 +4,13 @@ import { createTheme } from '@mui/material/styles';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#3b6e4e', // Cor principal
+      main: '#1A262F', // Cor principal
     },
     secondary: {
-      main: '#b3e3c0', // Cor secundária
+      main: '#e3e1de', // Cor secundária
     },
     background: {
-      default: '#f5f2ed', // Cor de fundo
+      default: '#FAF9F6', // Cor de fundo
     },
   },
   typography: {
