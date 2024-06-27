@@ -1,7 +1,7 @@
 // src/components/Sidebar.js
 import React from 'react';
 import { Drawer, List, ListItem, ListItemIcon, ListItemText, Box, IconButton } from '@mui/material';
-import { Assessment as AssessmentIcon, AttachMoney as AttachMoneyIcon, Settings as SettingsIcon, CalendarToday as CalendarIcon, ChevronLeft, ChevronRight, Create as CreateIcon } from '@mui/icons-material';
+import { Assessment as AssessmentIcon, AttachMoney as AttachMoneyIcon, Settings as SettingsIcon, CalendarToday as CalendarIcon, ChevronLeft, ChevronRight, Create as CreateIcon, BarChart as BarChartIcon } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
 
@@ -29,6 +29,9 @@ const Sidebar = ({ open, handleDrawerClose }) => {
           {theme.direction === 'ltr' ? <ChevronLeft /> : <ChevronRight />}
         </IconButton>
       </Box>
+      <Box sx={{ display: 'flex', justifyContent: 'center', padding: theme.spacing(2) }}>
+        <img src="/tilli-logo-2.png" alt="Sistema Admin" style={{ width: '100%', maxWidth: 120 }} />
+      </Box>
       <List>
         <ListItem button component={Link} to="/Agenda">
           <ListItemIcon sx={{ color: '#fff' }}><CalendarIcon /></ListItemIcon>
@@ -49,6 +52,10 @@ const Sidebar = ({ open, handleDrawerClose }) => {
         <ListItem button component={Link} to="/Config">
           <ListItemIcon sx={{ color: '#fff' }}><SettingsIcon /></ListItemIcon>
           <ListItemText primary="Configurações" />
+        </ListItem>
+        <ListItem button component={Link} to="/Grafico">
+          <ListItemIcon sx={{ color: '#fff' }}><BarChartIcon /></ListItemIcon>
+          <ListItemText primary="Gráfico" />
         </ListItem>
       </List>
     </Drawer>

@@ -116,7 +116,6 @@ const Financeiro = () => {
               <TableHead>
                 <TableRow>
                   <TableCell>
-                    <Checkbox />
                   </TableCell>
                   <TableCell>Descrição</TableCell>
                   <TableCell>Data</TableCell>

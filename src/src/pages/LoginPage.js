@@ -10,7 +10,7 @@ const LoginPage = () => {
 
   const handleLogin = () => {
     login();
-    navigate('/');
+    navigate('/Agenda'); // Redireciona para a agenda após o login
   };
 
   return (
@@ -25,13 +25,14 @@ const LoginPage = () => {
           height: '100vh'
         }}
       >
+        <img src="/tilli-logo.png" alt="Tilli Logo" style={{ marginBottom: 20, width: 200 }} />
         <TextField
-          label="Username"
+          label="Usuário"
           variant="outlined"
           sx={{ marginBottom: 2 }}
         />
         <TextField
-          label="Password"
+          label="Senha"
           type="password"
           variant="outlined"
           sx={{ marginBottom: 2 }}
