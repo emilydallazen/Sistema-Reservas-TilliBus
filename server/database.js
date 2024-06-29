@@ -95,5 +95,127 @@ const database = {
       data_cadastro: '2024-06-05'
     },
   ],
+  despesa: [
+    {
+      id: 1,
+      descricao: "teste",
+      valor: 150.00,
+      data_vencimento: '2024-07-10',
+      data_pagamento: '2024-07-05',
+      parcelado: false,
+      recorrente: true,
+      qtde_parcelas: 1,
+      tipo_pagamento: 1,
+      pago: true,
+      categoria: 1,
+      data_cadastro: '2024-06-30'
+    },
+  ],
+  categoria_despesa: [
+    {
+      id: 1,
+      descricao: "categoria teste"
+    },
+  ],
+  pagamento_reserva: [
+    {
+      reserva: 1,
+      valor_total: 150.00,
+      data_pagamento: '2024-07-05',
+      parcelado: false,
+      forma_pagamento: 1,
+      observacao: "teste pago"
+    },
+  ],
+  servico_adicional: [
+    {
+      id: 1,
+      descricao: "servico extra 1",
+      valor: 10.00,
+      custo: 7.00,
+      detalhes: "teste de servico extra"
+    },
+  ],
+  reserva_servico: [
+    {
+      reserva: 1,
+      servico: 1,
+      quantidade: 2,
+      data_cadastro: '2024-06-29',
+      observacao: "teste de servico extra relacionado à reserva"
+    },
+  ],
+  valor_hospedagem:[
+    {
+      hospedagem: 1,
+      dia_semana: 1,
+      valor: 100.00
+    },
+    {
+      hospedagem: 1,
+      dia_semana: 2,
+      valor: 100.00
+    },
+    {
+      hospedagem: 1,
+      dia_semana: 3,
+      valor: 110.00
+    },
+    {
+      hospedagem: 1,
+      dia_semana: 4,
+      valor: 100.00
+    },
+    {
+      hospedagem: 1,
+      dia_semana: 5,
+      valor: 150.00
+    },
+    {
+      hospedagem: 1,
+      dia_semana: 6,
+      valor: 100.00
+    },
+    {
+      hospedagem: 1,
+      dia_semana: 7,
+      valor: 200.00
+    },
+    {
+      hospedagem: 2,
+      dia_semana: 1,
+      valor: 100.00
+    },
+    {
+      hospedagem: 2,
+      dia_semana: 2,
+      valor: 80.00
+    },
+    {
+      hospedagem: 2,
+      dia_semana: 3,
+      valor: 110.00
+    },
+    {
+      hospedagem: 2,
+      dia_semana: 4,
+      valor: 100.00
+    },
+    {
+      hospedagem: 2,
+      dia_semana: 5,
+      valor: 120.00
+    },
+    {
+      hospedagem: 2,
+      dia_semana: 6,
+      valor: 140.00
+    },
+    {
+      hospedagem: 2,
+      dia_semana: 7,
+      valor: 150.00
+    },
+  ]
 };
 module.exports = database;
