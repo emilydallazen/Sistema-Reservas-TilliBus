@@ -28,7 +28,7 @@ const database = {
     },
     {
       id: 2,
-      descricao: "Evento 2",
+      descricao: "Evento 2 - backend teste",
       hospedagem: 1,
       checkin: '2024-06-22',
       checkout: '2024-06-22',
