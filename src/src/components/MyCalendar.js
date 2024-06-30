@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import FullCalendar from '@fullcalendar/react'; // Importa o componente principal
 import dayGridPlugin from '@fullcalendar/daygrid'; // Importa o plugin para a visualização mensal
 import timeGridPlugin from '@fullcalendar/timegrid'; // Importa o plugin para a visualização semanal
@@ -10,9 +10,28 @@ import DeleteIcon from '@mui/icons-material/Delete'; // Ícone de lixeira
 
 const MyCalendar = () => {
   const [events, setEvents] = useState([ // Estado inicial com exemplos de eventos estáticos
-    { title: 'Evento 1', date: '2024-06-20' },
-    { title: 'Evento 2', date: '2024-06-22' }
+   /* { title: 'Evento 1', date: '2024-06-20' },
+    { title: 'Evento 2', date: '2024-06-22' }*/
   ]);
+
+  useEffect(() => {
+    // Função para buscar eventos da API
+    const fetchEvents = async () => {
+      try {
+        const response = await fetch('/reservas'); // Substitua pela sua URL de API
+        const data = await response.json();
+        const fetchedEvents = data.map(event => ({
+          title: event.descricao,
+          date: event.checkin
+        }));
+        setEvents(fetchedEvents);
+      } catch (error) {
+        console.error('Erro ao buscar eventos:', error);
+      }
+    };
+
+    fetchEvents();
+  }, []);
 
   const [openModal, setOpenModal] = useState(false);
   const [eventData, setEventData] = useState({

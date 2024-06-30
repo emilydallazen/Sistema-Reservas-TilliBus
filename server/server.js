@@ -1,6 +1,6 @@
 const express = require('express');
 
-const pgp = require("pg-promise")({});
+//const pgp = require("pg-promise")({});
 
 const db = require('./database');
 
@@ -24,6 +24,7 @@ app.get("/api", (req, res) => {
 
 
 //CRUD USUÁRIO
+//Validar se não existe outro usuário com o mesmo nome
 app.get("/usuarios", function (req, res) {
     res.send(db.usuario);
 });
@@ -67,6 +68,8 @@ app.put("/usuarios/:id", function (req, res) {
 
 
 //CRUD CLIENTE
+//Validar se não existe outro com o mesmo cpf
+//Validar se o cliente não tem reservas pendentes antes de deletar
 app.get("/clientes", function (req, res) {
     res.send(db.cliente);
 });
@@ -110,6 +113,14 @@ app.put("/clientes/:id", function (req, res) {
 
 
 //CRUD RESERVA
+//Validar se a hospedagem informada existe
+//validar se o cliente existe
+//Validar ao cadastrar ou alterar se não existe bloqueio de agenda
+//Valdar se a quantia de adultos é <= ao limite da hospedagem
+//Validar quantidade de diárias > 0
+
+//Ao deletar, deletar também os adicionais e pagamento
+
 app.get("/reservas", function (req, res) {
     res.send(db.reserva);
 });
@@ -152,6 +163,8 @@ app.put("/reservas/:id", function (req, res) {
 });
 
 //CRUD BLOQUEIO
+//Ao cadastrar ou alterar, validar se não existe alguma reserva já cadastrada para o período
+
 app.get("/bloqueios", function (req, res) {
     res.send(db.bloqueio);
 });
@@ -278,6 +291,7 @@ app.put("/catdes/:id", function (req, res) {
 });
 
 //CRUD PAGAMENTO_RESERVA
+//Ao pagar(put), validar se o pagamento realmente existe, e se já não foi pago
 app.get("/pagamentos", function (req, res) {
     res.send(db.pagamento_reserva);
 });
@@ -320,6 +334,7 @@ app.put("/pagamentos/:id", function (req, res) {
 });
 
 //CRUD SERVICO_ADICIONAL
+//Ao deletar, bloquear caso já tenha sido usado
 app.get("/servicos", function (req, res) {
     res.send(db.servico_adicional);
 });
@@ -362,6 +377,7 @@ app.put("/servicos/:id", function (req, res) {
 });
 
 //CRUD SERVICO POR RESERVA
+//Validar se o serviço existe
 app.get("/servreserva", function (req, res) {
     res.send(db.reserva_servico);
 });
@@ -417,6 +433,9 @@ app.put("/servreserva/:reserva/:servico", function (req, res) {
 });
 
 //CRUD HOSPEDAGEM
+//Ao deletar, bloquear caso já tenha sido usada
+//Ao deletar, deletar também valores por dia
+
 app.get("/hospedagem", function (req, res) {
     res.send(db.hospedagem);
 });
@@ -459,6 +478,8 @@ app.put("/hospedagem/:id", function (req, res) {
 });
 
 //CRUD VALOR HOSPEDAGEM
+//Validar chaves (hospedagem, dia)
+
 app.get("/valorh", function (req, res) {
     res.send(db.valor_hospedagem);
 });
@@ -514,82 +535,3 @@ app.put("/valorh/:hospedagem/:dia_semana", function (req, res) {
         res.status(404).send("Valor não encontrado para a hospedagem e dia da semana especificados.");
     }
 });
-
-//Exemplo atividade de PROG II
-/*
-//CRUD Curso
-app.get("/cursos", function (req, res) {
-    res.send(db.cursos);
-});
-
-app.get("/cursos/:id", function (req, res) {
-    const id = parseInt(req.params.id);
-    const indexcurso = db.cursos.findIndex(curso => curso.id === id);
-    res.send(db.cursos[indexcurso]);
-});
-
-app.post("/cursos", function (req, res) {
-    db.cursos.push(req.body);
-    res.send(db.cursos);
-});
-
-app.delete("/cursos/:id", function (req, res) {
-    const id = parseInt(req.params.id);
-    const indexcurso = db.cursos.findIndex(curso => curso.id === id);
-    if(indexcurso !== -1){
-        db.cursos.splice(indexcurso, 1);
-        res.send(db.cursos);
-    } else {
-        res.status(404).send("Curso não encontrado");
-    }
-});
-
-app.put("/cursos/:id", function (req, res) {
-    const id = parseInt(req.params.id);
-    const indexcurso = db.cursos.findIndex(curso => curso.id === id);
-    if(indexcurso !== -1){
-        db.cursos[indexcurso] = req.body;
-        res.send(db.cursos[indexcurso]);
-    } else {
-        res.status(404).send("Curso não encontrado");
-    }
-});
-
-
-//CRUD CCR
-app.get("/ccrs", function (req, res) {
-    res.send(db.ccrs);
-});
-
-app.get("/ccrs/:id", function (req, res) {
-    const id = req.params.id;
-    const indexccr = db.ccrs.findIndex(ccr => ccr.id === id);
-    res.send(db.ccrs[indexccr]);
-});
-
-app.post("/ccrs", function (req, res) {
-    db.ccrs.push(req.body);
-    res.send(db.ccrs);
-});
-
-app.delete("/ccrs/:id", function (req, res) {
-    const id = req.params.id;
-    const indexccr = db.ccrs.findIndex(ccr => ccr.id === id);
-    if(indexccr !== -1){
-        db.ccrs.splice(indexccr, 1);
-        res.send(db.ccrs);
-    } else {
-        res.status(404).send("CCR não encontrado");
-    }
-});
-
-app.put("/ccrs/:id", function (req, res) {
-    const id = parseInt(req.params.id);
-    const indexccr = db.ccrs.findIndex(ccr => ccr.id === id);
-    if(indexccr !== -1){
-        db.ccrs[indexccr] = req.body;
-        res.send(db.ccrs[indexccr]);
-    } else {
-        res.status(404).send("CCR não encontrado");
-    }
-});*/
