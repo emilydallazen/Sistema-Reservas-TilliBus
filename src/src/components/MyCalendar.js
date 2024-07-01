@@ -318,7 +318,6 @@ const MyCalendar = () => {
                     name="dataCheckOut"
                     value={eventData.dataCheckOut}
                     InputProps={{ readOnly: true }}
-                    sx={{ backgroundColor: '#f0f0f0' }}
                   />
                 </Grid>
               </Grid>

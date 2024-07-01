@@ -2,12 +2,10 @@
 import React, { useState } from 'react';
 import { AppBar, Toolbar, Typography, IconButton, Menu, MenuItem } from '@mui/material';
 import { AccountCircle, Menu as MenuIcon } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
 
-const Navbar = ({ toggleDrawer }) => {
-  const navigate = useNavigate();
-  const { logout } = useAuth();
+const Navbar = ({ toggleDrawer, toggleTheme, isDarkMode }) => {
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleMenuOpen = (event) => {
@@ -18,13 +16,10 @@ const Navbar = ({ toggleDrawer }) => {
     setAnchorEl(null);
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
+  const handleSettings = () => {
   };
 
-  const handleSettings = () => {
-    navigate('/Config');
+  const handleLogout = () => {
   };
 
   return (
@@ -34,7 +29,7 @@ const Navbar = ({ toggleDrawer }) => {
           color="inherit"
           edge="start"
           onClick={toggleDrawer}
-          sx={{ marginRight: 2 }}
+          sx={{ marginRight: 3 }}
         >
           <MenuIcon />
         </IconButton>
@@ -43,8 +38,15 @@ const Navbar = ({ toggleDrawer }) => {
         </Typography>
         <IconButton
           color="inherit"
+          onClick={toggleTheme}
+          sx={{ marginLeft: 1.5 }}
+        >
+          {isDarkMode ? <Brightness7Icon /> : <Brightness4Icon />}
+        </IconButton>
+        <IconButton
+          color="inherit"
           onClick={handleMenuOpen}
-          sx={{ marginLeft: 'auto' }}
+          sx={{ marginLeft: 1 }}
         >
           <AccountCircle />
         </IconButton>

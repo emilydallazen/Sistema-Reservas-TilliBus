@@ -24,13 +24,13 @@ const Sidebar = ({ open, handleDrawerClose }) => {
         },
       }}
     >
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', padding: theme.spacing(1) }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', padding: theme.spacing(0) }}>
         <IconButton onClick={handleDrawerClose} sx={{ color: '#fff' }}>
           {theme.direction === 'ltr' ? <ChevronLeft /> : <ChevronRight />}
         </IconButton>
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'center', padding: theme.spacing(2) }}>
-        <img src="/tilli-logo-2.png" alt="Sistema Admin" style={{ width: '100%', maxWidth: 120 }} />
+        <img src="/tilli-logo-2.png" alt="Sistema Admin" style={{ width: '100%', maxWidth: 140 }} />
       </Box>
       <List>
         <ListItem button component={Link} to="/Agenda">
@@ -49,14 +49,15 @@ const Sidebar = ({ open, handleDrawerClose }) => {
           <ListItemIcon sx={{ color: '#fff' }}><AssessmentIcon /></ListItemIcon>
           <ListItemText primary="Dashboard" />
         </ListItem>
-        <ListItem button component={Link} to="/Config">
-          <ListItemIcon sx={{ color: '#fff' }}><SettingsIcon /></ListItemIcon>
-          <ListItemText primary="Configurações" />
-        </ListItem>
         <ListItem button component={Link} to="/Grafico">
           <ListItemIcon sx={{ color: '#fff' }}><BarChartIcon /></ListItemIcon>
           <ListItemText primary="Gráfico" />
         </ListItem>
+        <ListItem button component={Link} to="/Config">
+          <ListItemIcon sx={{ color: '#fff' }}><SettingsIcon /></ListItemIcon>
+          <ListItemText primary="Configurações" />
+        </ListItem>
+
       </List>
     </Drawer>
   );
