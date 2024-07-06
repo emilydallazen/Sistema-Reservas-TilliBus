@@ -1,0 +1,180 @@
+CREATE DATABASE bdtilli;
+
+CREATE TABLE Usuario (
+  Usu_ID SERIAL PRIMARY KEY,
+  Usu_Nome VARCHAR(100) NOT NULL,
+  Usu_Celular VARCHAR(20) NOT NULL,
+  Usu_Email VARCHAR(100) NOT NULL,
+  Usu_Senha VARCHAR(100) NOT NULL,
+  Usu_Administrador BOOLEAN NOT NULL,
+  Usu_Data_Cadastro TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+  DELETED CHAR(1);
+
+);
+
+CREATE TABLE Cliente (
+  Cli_ID SERIAL PRIMARY KEY,
+  Cli_CPF VARCHAR(11) UNIQUE NOT NULL,
+  Cli_Nome VARCHAR(100) NOT NULL,
+  Cli_Celular VARCHAR(20) NOT NULL,
+  Cli_Estado VARCHAR(50) NOT NULL,
+  Cli_Cidade VARCHAR(100) NOT NULL,
+  Cli_Logradouro VARCHAR(100) NOT NULL,
+  Cli_Numero VARCHAR(10) NOT NULL,
+  Cli_Complemento VARCHAR(50),
+  Cli_Email VARCHAR(100),
+  Cli_Data_Nascimento DATE
+  DELETED CHAR(1);
+
+);
+
+CREATE TABLE Hospedagem (
+  Hos_ID SERIAL PRIMARY KEY,
+  Hos_Nome VARCHAR(100) NOT NULL,
+  Hos_Lim_Hospedes INT NOT NULL,
+  Hos_Valor_Limpeza DECIMAL(10, 2) NOT NULL
+  DELETED CHAR(1);
+
+);
+
+CREATE TABLE Valor_Hospedagem (
+  VHo_Hospedagem INT REFERENCES Hospedagem(Hos_ID),
+  VHo_Dia_Semana INT NOT NULL,
+  VHo_Valor DECIMAL(10, 2) NOT NULL,
+  PRIMARY KEY (VHo_Hospedagem, VHo_Dia_Semana)
+  DELETED CHAR(1);
+
+);
+
+CREATE TABLE Reserva_Status (
+  RSt_ID SERIAL PRIMARY KEY,
+  RSt_Descricao VARCHAR(50) NOT NULL
+  DELETED CHAR(1);
+
+);
+
+CREATE TABLE Servico_Adicional (
+  SAd_ID SERIAL PRIMARY KEY,
+  SAd_Descricao VARCHAR(100) NOT NULL,
+  SAd_Valor DECIMAL(10, 2) NOT NULL,
+  SAd_Custo DECIMAL(10, 2) NOT NULL,
+  SAd_Detalhes VARCHAR(255)
+  DELETED CHAR(1);
+
+);
+
+CREATE TABLE Reserva (
+  Res_ID SERIAL PRIMARY KEY,
+  Res_Descricao VARCHAR(255) NOT NULL,
+  Res_Hospedagem INT REFERENCES Hospedagem(Hos_ID),
+  Res_CheckIn TIMESTAMP NOT NULL,
+  Res_CheckOut TIMESTAMP NOT NULL,
+  Res_Qtd_Diarias INT NOT NULL,
+  Res_Qtd_Adultos INT NOT NULL,
+  Res_Qtd_Criancas INT NOT NULL,
+  Res_Data_Cadastro TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  Res_Cliente INT REFERENCES Cliente(Cli_ID),
+  Res_Status INT REFERENCES Reserva_Status(RSt_ID),
+  Res_Observacao VARCHAR(255),
+  Res_Taxa_Limpeza BOOLEAN NOT NULL,
+  Res_Data_Edicao TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+  DELETED CHAR(1);
+
+);
+
+CREATE TABLE Reserva_Servico (
+  RSe_Reserva INT REFERENCES Reserva(Res_ID),
+  RSe_Servico INT REFERENCES Servico_Adicional(SAd_ID),
+  RSe_Quantidade INT NOT NULL,
+  RSe_Data_Cadastro TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  RSe_Observacao VARCHAR(255),
+  PRIMARY KEY (RSe_Reserva, RSe_Servico)
+  DELETED CHAR(1);
+
+);
+
+CREATE TABLE Pagamento_Reserva (
+  PRe_Reserva INT REFERENCES Reserva(Res_ID),
+  PRe_Valor_Total DECIMAL(10, 2) NOT NULL,
+  PRe_Data_Pagamento TIMESTAMP NOT NULL,
+  PRe_Parcelado INT NOT NULL,
+  PRe_Forma_Pagamento INT NOT NULL,
+  PRe_Observacao VARCHAR(255),
+  PRIMARY KEY (PRe_Reserva)
+  DELETED CHAR(1);
+
+);
+
+CREATE TABLE Categoria_Despesa (
+  CDe_ID SERIAL PRIMARY KEY,
+  CDe_Descricao VARCHAR(100) NOT NULL
+  DELETED CHAR(1);
+
+);
+
+CREATE TABLE Despesa (
+  Des_ID SERIAL PRIMARY KEY,
+  Des_Descricao VARCHAR(255) NOT NULL,
+  Des_Valor DECIMAL(10, 2) NOT NULL,
+  Des_Data_Vencimento TIMESTAMP NOT NULL,
+  Des_Data_Pagamento TIMESTAMP NOT NULL,
+  Des_Parcelado BOOLEAN NOT NULL,
+  Des_Recorrente BOOLEAN NOT NULL,
+  Des_Qtd_Parcelas INT NOT NULL,
+  Des_Tipo_Pagamento INT NOT NULL,
+  Des_Pago BOOLEAN NOT NULL,
+  Des_Categoria INT REFERENCES Categoria_Despesa(CDe_ID),
+  Des_Data_Cadastro TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+  DELETED CHAR(1);
+
+);
+
+CREATE TABLE Mensagem_Padrao (
+  MPa_ID SERIAL PRIMARY KEY,
+  MPa_Titulo VARCHAR(100) NOT NULL,
+  MPa_Mensagem VARCHAR(255) NOT NULL,
+  MPa_Data_Cadastro TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+  DELETED CHAR(1);
+
+);
+
+CREATE TABLE Categoria_Produto (
+  CPr_ID SERIAL PRIMARY KEY,
+  CPr_Nome VARCHAR(100) NOT NULL
+  DELETED CHAR(1);
+
+);
+
+CREATE TABLE Produto (
+  Pro_ID SERIAL PRIMARY KEY,
+  Pro_Nome VARCHAR(100) NOT NULL,
+  Pro_Valor_Custo DECIMAL(10, 2) NOT NULL,
+  Pro_Valor_Venda DECIMAL(10, 2) NOT NULL,
+  Pro_Categoria INT REFERENCES Categoria_Produto(CPr_ID),
+  Pro_Observacao VARCHAR(255),
+  Pro_Uso_Interno BOOLEAN NOT NULL
+  DELETED CHAR(1);
+
+);
+
+CREATE TABLE Estoque (
+  Est_ID SERIAL PRIMARY KEY,
+  Est_Produto INT REFERENCES Produto(Pro_ID),
+  Est_Tipo BOOLEAN NOT NULL,
+  Est_Quantidade INT NOT NULL,
+  Est_Data_Movimentacao TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  Est_Observacao VARCHAR(255)
+  DELETED CHAR(1);
+
+);
+
+CREATE TABLE Bloqueio (
+  Blo_ID SERIAL PRIMARY KEY,
+  Blo_Hospedagem INT REFERENCES Hospedagem(Hos_ID),
+  Blo_Observacao VARCHAR(255),
+  Blo_Data_Inicial TIMESTAMP NOT NULL,
+  Blo_Data_Final TIMESTAMP NOT NULL,
+  Blo_Data_Cadastro TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+  DELETED CHAR(1);
+);
+
