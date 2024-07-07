@@ -21,8 +21,8 @@ const MyCalendar = () => {
         const response = await fetch('/reservas'); // Substitua pela sua URL de API
         const data = await response.json();
         const fetchedEvents = data.map(event => ({
-          title: event.descricao,
-          date: event.checkin
+          title: event.res_descricao,
+          date: event.res_checkin
         }));
         setEvents(fetchedEvents);
       } catch (error) {

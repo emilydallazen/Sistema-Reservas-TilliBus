@@ -268,315 +268,309 @@ app.put("/despesas/:id", function (req, res) {
 });
 
 //CRUD CATEGORIA_DESPESA
-app.get("/catdes", function (req, res) {
-    res.send(db.categoria_despesa);
+app.get("/catdes", async function (req, res) {
+    let dbcategoriadespesa = await db_pg.any("SELECT * FROM Categoria_Despesa Where Deleted is NULL;");
+    res.status(200).send(dbcategoriadespesa);
 });
 
-app.get("/catdes/:id", function (req, res) {
+app.get("/catdes/:id", async function (req, res) {
     const id = parseInt(req.params.id);
-    const indexcatdespesa = db.categoria_despesa.findIndex(categoria_despesa => categoria_despesa.id === id);
-    if(indexcatdespesa !== -1){
-        res.send(db.categoria_despesa[indexcatdespesa]);
-    } else {
-        res.status(404).send("Categoria de despesa não encontrada");
-    }
+    await db_pg.one("SELECT * FROM Categoria_Despesa WHERE CDe_ID = $1 AND DELETED is NULL;", id).then(dbcategoriadespesa =>{
+        res.status(200).send(dbcategoriadespesa);
+    }).catch(error => {
+        res.status(500).send("Erro ao consultar categoria de despesa: " + error.message);    
+    });
 });
 
 app.post("/catdes", function (req, res) {
-    db.categoria_despesa.push(req.body);
-    res.send(db.categoria_despesa);
+    db_pg.none("INSERT INTO Categoria_Despesa (CDe_Descricao) VALUES ($1)", 
+    [req.body.Cde_Descricao]).then(()=>{
+        res.status(200).send("Categoria de despesa inserida!");
+    }).catch(error => {
+        res.status(500).send("Erro ao inserir categoria de despesa: " + error.message); 
+    });
 });
 
 app.delete("/catdes/:id", function (req, res) {
     const id = parseInt(req.params.id);
-    const indexcatdespesa = db.categoria_despesa.findIndex(categoria_despesa => categoria_despesa.id === id);
-    if(indexcatdespesa !== -1){
-        db.categoria_despesa.splice(indexcatdespesa, 1);
-        res.send(db.categoria_despesa);
-    } else {
-        res.status(404).send("Categoria de despesa não encontrada");
-    }
+    db_pg.none("Update Categoria_Despesa Set DELETED = 'S' Where CDe_Id = $1;", id).then(()=>{
+        res.status(200).send("Categoria de despesa deletada!");
+    }).catch(error => {
+        res.status(500).send("Erro ao deletar categoria de despesa: " + error.message); 
+    });
 });
 
 app.put("/catdes/:id", function (req, res) {
     const id = parseInt(req.params.id);
-    const indexcatdespesa = db.categoria_despesa.findIndex(categoria_despesa => categoria_despesa.id === id);
-    if(indexcatdespesa !== -1){
-        db.categoria_despesa[indexcatdespesa] = req.body;
-        res.send(db.categoria_despesa[indexcatdespesa]);
-    } else {
-        res.status(404).send("Categoria de despesa não encontrada");
-    }
+    db_pg.none("UPDATE categoria_despesa	SET cde_descricao=$2 WHERE $1;", 
+    [id, req.body.Cde_Descricao]).then(()=>{
+        res.status(200).send("Categoria de despesa atualizada!");
+    }).catch(error => {
+        res.status(500).send("Erro ao atualizar categoria de despesa: " + error.message); 
+    });
 });
 
 //CRUD PAGAMENTO_RESERVA
-app.get("/pagamentos", function (req, res) {
-    res.send(db.pagamento_reserva);
+app.get("/pagamentos", async function (req, res) {
+    let dbpagamento = await db_pg.any("SELECT * FROM Pagamento_Reserva Where Deleted is NULL;");
+    res.status(200).send(dbpagamento);
 });
 
-app.get("/pagamentos/:id", function (req, res) {
+app.get("/pagamentos/:id", async function (req, res) {
     const id = parseInt(req.params.id);
-    const indexpagamento = db.pagamento_reserva.findIndex(pagamento_reserva => pagamento_reserva.id === id);
-    if(indexpagamento !== -1){
-        res.send(db.pagamento_reserva[indexpagamento]);
-    } else {
-        res.status(404).send("Pagamento não encontrado");
-    }
+    await db_pg.one("SELECT * FROM Pagamento_Reserva WHERE PRe_Reserva = $1 AND DELETED is NULL;", id).then(dbpagamento =>{
+        res.status(200).send(dbpagamento);
+    }).catch(error => {
+        res.status(500).send("Erro ao consultar pagamento: " + error.message);    
+    });
 });
 
 app.post("/pagamentos", function (req, res) {
-    // Valida se já existe um registro de pagamento não parcelado para essa reserva
-    const indexpagamento = db.pagamento_reserva.findIndex(pagamento => pagamento.reserva === parseInt(req.reserva) && pagamento.parcelado === false);
-    if(indexpagamento !== -1){
-        res.status(500).send("A reserva já foi paga.");
-    }else{
-        db.pagamento_reserva.push(req.body);
-        res.send(db.pagamento_reserva);
-    }
+    db_pg.none("INSERT INTO Pagamento_Reserva (PRe_Reserva, PRe_Valor_Total, PRe_Data_Pagamento, PRe_Parcelado, PRe_Forma_Pagamento, PRe_Observacao) VALUES \
+    ($1, $2, $3, $4, $5, $6)", 
+    [req.body.PRe_Reserva, req.body.PRe_Valor_Total, req.body.PRe_Data_Pagamento, req.body.PRe_Parcelado, req.body.PRe_Forma_Pagamento, req.body.PRe_Observacao]).then(()=>{
+        res.status(200).send("Pagamento inserido!");
+    }).catch(error => {
+        res.status(500).send("Erro ao inserir pagamento: " + error.message); 
+    });
 });
 
 app.delete("/pagamentos/:id", function (req, res) {
     const id = parseInt(req.params.id);
-    const indexpagamento = db.pagamento_reserva.findIndex(pagamento_reserva => pagamento_reserva.id === id);
-    if(indexpagamento !== -1){
-        db.pagamento_reserva.splice(indexpagamento, 1);
-        res.send(db.pagamento_reserva);
-    } else {
-        res.status(404).send("Pagamento não encontrado");
-    }
+    db_pg.none("Update Pagamento_Reserva Set DELETED = 'S' Where PRe_Reserva = $1;", id).then(()=>{
+        res.status(200).send("Pagamento deletado!");
+    }).catch(error => {
+        res.status(500).send("Erro ao deletar pagamento: " + error.message); 
+    });
 });
 
 app.put("/pagamentos/:id", function (req, res) {
     const id = parseInt(req.params.id);
-    const indexpagamento = db.pagamento_reserva.findIndex(pagamento_reserva => pagamento_reserva.id === id);
-    if(indexpagamento !== -1){
-        db.pagamento_reserva[indexpagamento] = req.body;
-        res.send(db.pagamento_reserva[indexpagamento]);
-    } else {
-        res.status(404).send("Pagamento não encontrado");
-    }
+    db_pg.none("UPDATE pagamento_reserva \
+	SET pre_valor_total=$2, pre_data_pagamento=$3, pre_parcelado=$4, pre_forma_pagamento=$5, pre_observacao=$6 \
+	WHERE PRe_reserva = $1;", 
+    [id, req.body.PRe_Valor_Total, req.body.PRe_Data_Pagamento, req.body.PRe_Parcelado, req.body.PRe_Forma_Pagamento, req.body.PRe_Observacao]).then(()=>{
+        res.status(200).send("Pagamento atualizado!");
+    }).catch(error => {
+        res.status(500).send("Erro ao atualizar pagamento: " + error.message); 
+    });
 });
 
 //CRUD SERVICO_ADICIONAL
-app.get("/servicos", function (req, res) {
-    res.send(db.servico_adicional);
+app.get("/servicos", async function (req, res) {
+    let dbservicos = await db_pg.any("SELECT * FROM Servico_Adicional Where Deleted is NULL;");
+    res.status(200).send(dbservicos);
 });
 
-app.get("/servicos/:id", function (req, res) {
+app.get("/servicos/:id", async function (req, res) {
     const id = parseInt(req.params.id);
-    const indexservico = db.servico_adicional.findIndex(servico_adicional => servico_adicional.id === id);
-    if(indexservico !== -1){
-        res.send(db.servico_adicional[indexservico]);
-    } else {
-        res.status(404).send("Serviço não encontrado");
-    }
+    await db_pg.one("SELECT * FROM Servico_Adicional WHERE SAd_ID = $1 AND DELETED is NULL;", id).then(dbservicos =>{
+        res.status(200).send(dbservicos);
+    }).catch(error => {
+        res.status(500).send("Erro ao consultar serviço: " + error.message);    
+    });
 });
 
 app.post("/servicos", function (req, res) {
-    db.servico_adicional.push(req.body);
-    res.send(db.servico_adicional);
+    db_pg.none("INSERT INTO Servico_Adicional (SAd_Descricao, SAd_Valor, SAd_Custo, SAd_Detalhes) VALUES \
+    ($1, $2, $3, $4)", 
+    [req.body.SAd_Descricao, req.body.SAd_Valor, req.body.SAd_Custo, req.body.SAd_Detalhes]).then(()=>{
+        res.status(200).send("Serviço inserido!");
+    }).catch(error => {
+        res.status(500).send("Erro ao inserir serviço: " + error.message); 
+    });
 });
 
 app.delete("/servicos/:id", function (req, res) {
-    //Ao deletar, bloquear caso já tenha sido usado
     const id = parseInt(req.params.id);
-    const indexuso = db.reserva_servico.findIndex(uso => uso.servico === id);
-    const indexservico = db.servico_adicional.findIndex(servico_adicional => servico_adicional.id === id);
-    if(indexuso !== -1){
-        res.status(500).send("O serviço já foi utilizado, portanto não é possível deletar.")
-    }else if(indexservico !== -1){
-        db.servico_adicional.splice(indexservico, 1);
-        res.send(db.servico_adicional);
-    } else {
-        res.status(404).send("Serviço não encontrado");
-    }
+    db_pg.none("Update Servico_Adicional Set DELETED = 'S' Where SAd_ID = $1;", id).then(()=>{
+        res.status(200).send("Serviço deletado!");
+    }).catch(error => {
+        res.status(500).send("Erro ao deletar serviço: " + error.message); 
+    });
 });
 
 app.put("/servicos/:id", function (req, res) {
     const id = parseInt(req.params.id);
-    const indexservico = db.servico_adicional.findIndex(servico_adicional => servico_adicional.id === id);
-    if(indexservico !== -1){
-        db.servico_adicional[indexservico] = req.body;
-        res.send(db.servico_adicional[indexservico]);
-    } else {
-        res.status(404).send("Serviço não encontrado");
-    }
+    db_pg.none("UPDATE servico_adicional \
+	SET sad_descricao=$2, sad_valor=$3, sad_custo=$4, sad_detalhes=$5 \
+	WHERE sad_id=$1;", 
+    [id, req.body.SAd_Descricao, req.body.SAd_Valor, req.body.SAd_Custo, req.body.SAd_Detalhes]).then(()=>{
+        res.status(200).send("Serviço atualizado!");
+    }).catch(error => {
+        res.status(500).send("Erro ao atualizar serviço: " + error.message); 
+    });
 });
 
 //CRUD SERVICO POR RESERVA
-app.get("/servreserva", function (req, res) {
-    res.send(db.reserva_servico);
+app.get("/servreserva", async function (req, res) {
+    let dbservreserva = await db_pg.any("SELECT * FROM reserva_servico Where Deleted is NULL;");
+    res.status(200).send(dbservreserva);
 });
 
-app.get("/servreserva/:reserva/:servico", function (req, res) {
+app.get("/servreserva/:reserva/:servico", async function (req, res) {
     const preserva = parseInt(req.params.reserva);
     const pservico = parseInt(req.params.servico);
 
-    const servicoReserva = db.reserva_servico.find(servico => 
-        servico.reserva === preserva && servico.servico === pservico
-    );
+    await db_pg.one("SELECT * FROM reserva_servico WHERE rse_reserva = $1 AND rse_servico = $2 AND DELETED is NULL;", [preserva, pservico]).then(dbservreserva =>{
+        res.status(200).send(dbservreserva);
+    }).catch(error => {
+        res.status(500).send("Erro ao consultar serviço por reserva: " + error.message);    
+    });
+});
 
-    if (servicoReserva) {
-        res.send(servicoReserva);
-    } else {
-        res.status(404).send("Serviço não encontrado para a reserva especificada.");
-    }
+app.get("/servreserva/:reserva", async function (req, res) {
+    const preserva = parseInt(req.params.reserva);
+
+    await db_pg.all("SELECT * FROM reserva_servico WHERE rse_reserva = $1 AND DELETED is NULL;", preserva).then(dbservreserva =>{
+        res.status(200).send(dbservreserva);
+    }).catch(error => {
+        res.status(500).send("Erro ao consultar serviço por reserva: " + error.message);    
+    });
 });
 
 app.post("/servreserva", function (req, res) {
-    //Validar se o serviço existe
-    const indexservico = db.servico_adicional.findIndex(servico => servico.id === parseInt(req.servico))
-    if(indexservico === -1){
-        res.status(404).send("Serviço não encontrado.");
-    }else{
-        db.reserva_servico.push(req.body);
-        res.send(db.reserva_servico);
-    }
+    db_pg.none("INSERT INTO reserva_servico (rse_reserva, rse_servico, rse_quantidade, rse_data_cadastro, rse_observacao) VALUES \
+    ($1, $2, $3, $4, $5)", 
+    [req.body.rse_reserva, req.body.rse_servico, req.body.rse_quantidade, req.body.rse_data_cadastro, req.body.rse_observacao]).then(()=>{
+        res.status(200).send("Serviço inserido para a reserva!");
+    }).catch(error => {
+        res.status(500).send("Erro ao inserir serviço por reserva: " + error.message); 
+    });
 });
 
 app.delete("/servreserva/:reserva/:servico", function (req, res) {
     const preserva = parseInt(req.params.reserva);
     const pservico = parseInt(req.params.servico);
-
-    const indexservico = db.reserva_servico.findIndex(servico => 
-        servico.reserva === preserva && servico.servico === pservico
-    );
-    if (indexservico !== -1) {
-        db.reserva_servico.splice(indexservico, 1);
-        res.send(db.reserva_servico);
-    } else {
-        res.status(404).send("Serviço não encontrado para a reserva especificada.");
-    }
+    db_pg.none("Update reserva_servico Set DELETED = 'S' Where rse_reserva = $1 AND rse_servico = $2;", [preserva, pservico]).then(()=>{
+        res.status(200).send("Serviço deletado da reserva!");
+    }).catch(error => {
+        res.status(500).send("Erro ao deletar serviço por reserva: " + error.message); 
+    });
 });
 
 app.put("/servreserva/:reserva/:servico", function (req, res) {
     const preserva = parseInt(req.params.reserva);
     const pservico = parseInt(req.params.servico);
 
-    const indexservico = db.reserva_servico.findIndex(servico => 
-        servico.reserva === preserva && servico.servico === pservico
-    );
-    if (indexservico !== -1) {
-        db.reserva_servico[indexservico] = req.body;
-        res.send(db.reserva_servico[indexservico]);
-    } else {
-        res.status(404).send("Serviço não encontrado para a reserva especificada.");
-    }
+    db_pg.none("UPDATE reserva_servico \
+	SET rse_quantidade=$3, rse_data_cadastro=$4, rse_observacao=$5 \
+	WHERE rse_reserva=$1 AND rse_servico=$2;", 
+    [preserva, pservico, req.body.rse_quantidade, req.body.rse_data_cadastro, req.body.rse_observacao]).then(()=>{
+        res.status(200).send("Serviço atualizado na reserva!");
+    }).catch(error => {
+        res.status(500).send("Erro ao atualizar serviço por reserva: " + error.message); 
+    });
 });
 
 //CRUD HOSPEDAGEM
-app.get("/hospedagem", function (req, res) {
-    res.send(db.hospedagem);
+app.get("/hospedagem", async function (req, res) {
+    let dbhospedagem = await db_pg.any("SELECT * FROM hospedagem Where Deleted is NULL;");
+    res.status(200).send(dbhospedagem);
 });
 
-app.get("/hospedagem/:id", function (req, res) {
+app.get("/hospedagem/:id", async function (req, res) {
     const id = parseInt(req.params.id);
-    const indexhospedagem = db.hospedagem.findIndex(hospedagem => hospedagem.id === id);
-    if(indexhospedagem !== -1){
-        res.send(db.hospedagem[indexhospedagem]);
-    } else {
-        res.status(404).send("Hospedagem não encontrada.");
-    }
+    await db_pg.one("SELECT * FROM Hospedagem WHERE Hos_ID = $1 AND DELETED is NULL;", id).then(dbhospedagem =>{
+        res.status(200).send(dbhospedagem);
+    }).catch(error => {
+        res.status(500).send("Erro ao consultar hospedagem: " + error.message);    
+    });
 });
 
 app.post("/hospedagem", function (req, res) {
-    db.hospedagem.push(req.body);
-    res.send(db.hospedagem);
+    db_pg.none("INSERT INTO Hospedagem (Hos_Nome, Hos_Lim_Hospedes, Hos_Valor_Limpeza) VALUES \
+    ($1, $2, $3)", 
+    [req.body.Hos_Nome, req.body.Hos_Lim_Hospedes, req.body.Hos_Valor_Limpeza]).then(()=>{
+        res.status(200).send("Hospedagem inserida!");
+    }).catch(error => {
+        res.status(500).send("Erro ao inserir hospedagem: " + error.message); 
+    });
 });
 
 app.delete("/hospedagem/:id", function (req, res) {
-    //Ao deletar, bloquear caso já tenha sido usada
-    //Ao deletar, deletar também valores por dia
     const id = parseInt(req.params.id);
-    const indexreserva = db.reserva.findIndex(reserva => reserva.hospedagem === id);
-    const indexhospedagem = db.hospedagem.findIndex(hospedagem => hospedagem.id === id);
-    if(indexreserva !== -1){
-        res.status(500).send("Existem reservas associadas à hospedagem, portanto não é possível excluir.");
-    }else if(indexhospedagem !== -1){
-        //Deletar os valores
-        db.valor_hospedagem = db.valor_hospedagem.filter(valor => valor.hospedagem !== id);
-
-        //Deleta a hospedagem
-        db.hospedagem.splice(indexhospedagem, 1);
-        res.send(db.hospedagem);
-    } else {
-        res.status(404).send("Hospedagem não encontrada.");
-    }
+    db_pg.none("Update Hospedagem Set DELETED = 'S' Where Hos_ID = $1;\
+                Update Valor_Hospedagem Set DELETED = 'S' Where VHo_Hospedagem = $1;", id).then(()=>{
+        res.status(200).send("Hospedagem deletada!");
+    }).catch(error => {
+        res.status(500).send("Erro ao deletar hospedagem: " + error.message); 
+    });
 });
 
 app.put("/hospedagem/:id", function (req, res) {
     const id = parseInt(req.params.id);
-    const indexhospedagem = db.hospedagem.findIndex(hospedagem => hospedagem.id === id);
-    if(indexhospedagem !== -1){
-        db.hospedagem[indexhospedagem] = req.body;
-        res.send(db.hospedagem[indexhospedagem]);
-    } else {
-        res.status(404).send("Hospedagem não encontrada.");
-    }
+    db_pg.none("UPDATE hospedagem \
+	SET hos_nome=$2, hos_lim_hospedes=$3, hos_valor_limpeza=$4 \
+	WHERE hos_id=$1;", 
+    [id, req.body.Hos_Nome, req.body.Hos_Lim_Hospedes, req.body.Hos_Valor_Limpeza]).then(()=>{
+        res.status(200).send("Hospedagem atualizada!");
+    }).catch(error => {
+        res.status(500).send("Erro ao atualizar hospedagem: " + error.message); 
+    });
 });
 
 //CRUD VALOR HOSPEDAGEM
-app.get("/valorh", function (req, res) {
-    res.send(db.valor_hospedagem);
+app.get("/valorh", async function (req, res) {
+    let dbvalhospedagem = await db_pg.any("SELECT * FROM valor_hospedagem Where Deleted is NULL;");
+    res.status(200).send(dbvalhospedagem);
 });
 
-app.get("/valorh/:hospedagem/:dia_semana", function (req, res) {
+app.get("/valorh/:hospedagem/:dia_semana", async function (req, res) {
     const hospedagem = parseInt(req.params.hospedagem);
     const dia_semana = parseInt(req.params.dia_semana);
 
-    const valorHospedagem = db.valor_hospedagem.find(valor => 
-        valor.hospedagem === hospedagem && valor.dia_semana === dia_semana
-    );
+    await db_pg.one("SELECT * FROM valor_hospedagem WHERE vho_hospedagem=$1 AND vho_dia_semana=$2 AND DELETED is NULL;", [hospedagem, dia_semana]).then(dbvalhospedagem =>{
+        res.status(200).send(dbvalhospedagem);
+    }).catch(error => {
+        res.status(500).send("Erro ao consultar valor da hospedagem: " + error.message);    
+    });
+});
 
-    if (valorHospedagem) {
-        res.send(valorHospedagem);
-    } else {
-        res.status(404).send("Valor não encontrado para a hospedagem e dia da semana especificados.");
-    }
+app.get("/valorh/:hospedagem", async function (req, res) {
+    const hospedagem = parseInt(req.params.hospedagem);
+
+    await db_pg.all("SELECT * FROM valor_hospedagem WHERE vho_hospedagem=$1 AND DELETED is NULL;", hospedagem).then(dbvalhospedagem =>{
+        res.status(200).send(dbvalhospedagem);
+    }).catch(error => {
+        res.status(500).send("Erro ao consultar valores da hospedagem: " + error.message);    
+    });
 });
 
 app.post("/valorh", function (req, res) {
-    //Validar chaves (hospedagem, dia)
-    const indexhospedagem = db.hospedagem.findIndex(hospedagem => hospedagem.id === parseInt(req.hospedagem));
-    const indexchave = db.valor_hospedagem.findIndex(chave => chave.hospedagem === parseInt(req.hospedagem) && chave.dia_semana === parseInt(req.dia_semana));
-    if(indexhospedagem === -1){
-        res.status(404).send("Hospedagem não encontrada.");
-    }else if(indexchave !== -1){
-        res.status(500).send("Já existe um valor cadastrado para essa hospedagem e dia.");
-    }else{
-        db.valor_hospedagem.push(req.body);
-        res.send(db.valor_hospedagem);
-    }
+    db_pg.none("INSERT INTO Valor_Hospedagem (VHo_Hospedagem, VHo_Dia_Semana, VHo_Valor) VALUES \
+    ($1, $2, $3)", 
+    [req.body.VHo_Hospedagem, req.body.VHo_Dia_Semana, req.body.VHo_Valor]).then(()=>{
+        res.status(200).send("Valor inserido!");
+    }).catch(error => {
+        res.status(500).send("Erro ao inserir valor: " + error.message); 
+    });
 });
 
 app.delete("/valorh/:hospedagem/:dia_semana", function (req, res) {
     const hospedagem = parseInt(req.params.hospedagem);
     const dia_semana = parseInt(req.params.dia_semana);
 
-    const indexvalor = db.valor_hospedagem.findIndex(valor => 
-        valor.hospedagem === hospedagem && valor.dia_semana === dia_semana
-    );
-
-    if (indexvalor !== -1) {
-        db.valor_hospedagem.splice(indexvalor, 1);
-        res.send(db.valor_hospedagem);
-    } else {
-        res.status(404).send("Valor não encontrado para a hospedagem e dia da semana especificados.");
-    }
+    db_pg.none("UPDATE valor_hospedagem \
+	SET deleted='S' \
+	WHERE vho_hospedagem=$1, vho_dia_semana=$2;", [hospedagem, dia_semana]).then(()=>{
+        res.status(200).send("Valor deletado!");
+    }).catch(error => {
+        res.status(500).send("Erro ao deletar valor: " + error.message); 
+    });
 });
 
 app.put("/valorh/:hospedagem/:dia_semana", function (req, res) {
     const hospedagem = parseInt(req.params.hospedagem);
     const dia_semana = parseInt(req.params.dia_semana);
 
-    const indexvalor = db.valor_hospedagem.findIndex(valor => 
-        valor.hospedagem === hospedagem && valor.dia_semana === dia_semana
-    );
-
-    if (indexvalor !== -1) {
-        db.valor_hospedagem[indexvalor] = req.body;
-        res.send(db.valor_hospedagem[indexvalor]);
-    } else {
-        res.status(404).send("Valor não encontrado para a hospedagem e dia da semana especificados.");
-    }
+    const id = parseInt(req.params.id);
+    db_pg.none("UPDATE valor_hospedagem \
+	SET vho_valor=$3 \
+	WHERE vho_hospedagem=$1, vho_dia_semana=$2;", 
+    [hospedagem, dia_semana, req.body.VHo_Valor]).then(()=>{
+        res.status(200).send("Valor atualizado!");
+    }).catch(error => {
+        res.status(500).send("Erro ao atualizar valor: " + error.message); 
+    });
 });
