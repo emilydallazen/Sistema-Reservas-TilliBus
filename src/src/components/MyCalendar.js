@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import FullCalendar from '@fullcalendar/react'; // Importa o componente principal
 import dayGridPlugin from '@fullcalendar/daygrid'; // Importa o plugin para a visualização mensal
 import timeGridPlugin from '@fullcalendar/timegrid'; // Importa o plugin para a visualização semanal
@@ -18,8 +19,8 @@ const MyCalendar = () => {
     // Função para buscar eventos da API
     const fetchEvents = async () => {
       try {
-        const response = await fetch('/reservas'); // Substitua pela sua URL de API
-        const data = await response.json();
+        const response = await axios.get('/reservas');
+        const data = response.data;
         const fetchedEvents = data.map(event => ({
           title: event.res_descricao,
           date: event.res_checkin
@@ -29,7 +30,7 @@ const MyCalendar = () => {
         console.error('Erro ao buscar eventos:', error);
       }
     };
-
+  
     fetchEvents();
   }, []);
 

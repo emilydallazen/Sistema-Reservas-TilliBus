@@ -4,9 +4,12 @@ import { AppBar, Toolbar, Typography, IconButton, Menu, MenuItem } from '@mui/ma
 import { AccountCircle, Menu as MenuIcon } from '@mui/icons-material';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
+import { useAuth } from '../context/AuthContext';
+import axios from 'axios';
 
 const Navbar = ({ toggleDrawer, toggleTheme, isDarkMode }) => {
   const [anchorEl, setAnchorEl] = useState(null);
+  const { logout } = useAuth(); // use logout from the auth context
 
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -17,9 +20,18 @@ const Navbar = ({ toggleDrawer, toggleTheme, isDarkMode }) => {
   };
 
   const handleSettings = () => {
+    // handle settings logic here
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      // Make the logout request to the backend
+      await axios.post('/logout');
+      // Call the logout function from the context
+      logout();
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
   };
 
   return (
