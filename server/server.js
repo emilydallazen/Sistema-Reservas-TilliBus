@@ -237,7 +237,7 @@ app.delete("/clientes/:id", requireJWTAuth, function (req, res) {
 
 app.put("/clientes/:id", requireJWTAuth, function (req, res) {
     const id = parseInt(req.params.id);
-    db_pg.none("UPDATE pcliente \
+    db_pg.none("UPDATE cliente \
 	SET cli_cpf=$2, cli_nome=$3, cli_celular=$4, cli_estado=$5, cli_cidade=$6, cli_logradouro=$7, cli_numero=$8, cli_complemento=$9, cli_email=$10, cli_data_nascimento=$11 \
 	WHERE cli_id = $1;", 
     [id, req.body.cli_cpf, req.body.cli_nome, req.body.cli_celular, req.body.cli_estado, req.body.cli_cidade, req.body.cli_logradouro, req.body.cli_numero, req.body.cli_complemento, req.body.cli_email, req.body.cli_data_nascimento]).then(()=>{
@@ -761,4 +761,172 @@ app.put("/valorh/:hospedagem/:dia_semana", requireJWTAuth, function (req, res) {
     }).catch(error => {
         res.status(500).send("Erro ao atualizar valor: " + error.message); 
     });
+});
+app.get("/reservas-por-mes", requireJWTAuth, async function (req, res) {
+    try {
+        const query = `
+            SELECT
+                COUNT(*) AS quantidade,
+                EXTRACT(MONTH FROM Res_CheckIn) AS mes
+            FROM Reserva
+            WHERE Res_Status = 3 
+                AND DELETED IS NULL
+            GROUP BY mes
+            ORDER BY mes;
+        `;
+        const reservasPorMes = await db_pg.any(query);
+        res.status(200).send(reservasPorMes);
+    } catch (error) {
+        res.status(500).send("Erro ao buscar reservas por mês: " + error.message);
+    }
+});
+
+app.get("/saldo-financas", requireJWTAuth, async function (req, res) {
+    try {
+        // Obter datas inicial e final dos parâmetros da requisição
+        const { startDate, endDate } = req.query;
+
+        // Validar e formatar datas (considerando que estão no formato 'YYYY-MM-DD')
+        const validStartDate = startDate ? new Date(startDate) : new Date();
+        const validEndDate = endDate ? new Date(endDate) : new Date();
+
+        // Ajustar a data de início para 30 dias atrás
+        validStartDate.setDate(validStartDate.getDate() - 30);
+
+        // Consulta SQL para calcular saldo financeiro
+        const query = `
+            SELECT
+                COALESCE(SUM(d.Des_Valor), 0) AS Total_Despesas,
+                COALESCE(SUM(pr.PRe_Valor_Total), 0) AS Total_Pagamentos_Reservas,
+                COALESCE(SUM(pr.PRe_Valor_Total), 0) - COALESCE(SUM(d.Des_Valor), 0) AS Saldo_Resultante
+            FROM
+                (SELECT COALESCE(SUM(Des_Valor), 0) AS Des_Valor
+                FROM Despesa d
+                WHERE d.DELETED IS NULL
+                    AND d.Des_Data_Pagamento >= $1
+                    AND d.Des_Data_Pagamento <= $2
+                ) AS d
+            CROSS JOIN
+                (SELECT COALESCE(SUM(PRe_Valor_Total), 0) AS PRe_Valor_Total
+                FROM Pagamento_Reserva pr
+                    LEFT JOIN Reserva r ON pr.PRe_Reserva = r.Res_ID
+                WHERE pr.DELETED IS NULL
+                    AND r.DELETED IS NULL
+                    AND pr.PRe_Data_Pagamento >= $1
+                    AND pr.PRe_Data_Pagamento <= $2
+                ) AS pr;
+        `;
+
+        const result = await db_pg.any(query, [validStartDate, validEndDate]);
+
+        // Verificar se há resultados na resposta da consulta
+        if (result && result.length > 0) {
+            const { total_despesas, total_pagamentos_reservas, saldo_resultante } = result[0];
+
+            res.status(200).json({
+                total_despesas,
+                total_pagamentos_reservas,
+                saldo_resultante
+            });
+        } else {
+            // Caso não haja resultados, retornar um valor padrão ou uma mensagem indicando nenhum resultado
+            res.status(404).send("Nenhum dado encontrado para o período especificado.");
+        }
+    } catch (error) {
+        res.status(500).send("Erro ao buscar saldo financeiro: " + error.message);
+    }
+});
+
+app.get("/pagamentos-reserva", requireJWTAuth, async function (req, res) {
+    try {
+        // Obter datas inicial e final dos parâmetros da requisição
+        const { startDate, endDate } = req.query;
+
+        // Validar e formatar datas (considerando que estão no formato 'YYYY-MM-DD')
+        const validStartDate = startDate ? new Date(startDate) : new Date();
+        const validEndDate = endDate ? new Date(endDate) : new Date();
+
+        // Ajustar a data de início para 90 dias atrás
+        validStartDate.setDate(validStartDate.getDate() - 30);
+
+        // Consulta SQL para buscar pagamentos de reserva no período especificado
+        const query = `
+            SELECT 
+                PRe_Reserva, 
+                R.Res_Descricao,
+                PRe_Valor_Total, 
+                PRe_Data_Pagamento, 
+                PRe_Parcelado, 
+                PRe_Forma_Pagamento, 
+                PRe_Observacao 
+            FROM 
+                Pagamento_Reserva PR
+            JOIN Reserva R on PR.PRe_Reserva = R.Res_ID
+            WHERE 
+                PR.DELETED IS NULL
+                AND PRe_Data_Pagamento >= $1
+                AND PRe_Data_Pagamento <= $2;
+        `;
+
+        const result = await db_pg.any(query, [validStartDate, validEndDate]);
+
+        // Verificar se há resultados na resposta da consulta
+        if (result && result.length > 0) {
+            res.status(200).json(result);
+        } else {
+            // Caso não haja resultados, retornar uma mensagem indicando nenhum resultado
+            res.status(404).send("Nenhum pagamento de reserva encontrado para o período especificado.");
+        }
+    } catch (error) {
+        res.status(500).send("Erro ao buscar pagamentos de reserva: " + error.message);
+    }
+});
+
+app.get("/saidas-detalhadas", requireJWTAuth, async function (req, res) {
+    try {
+        // Obter datas inicial e final dos parâmetros da requisição
+        const { startDate, endDate } = req.query;
+
+        // Validar e formatar datas (considerando que estão no formato 'YYYY-MM-DD')
+        const validStartDate = startDate ? new Date(startDate) : new Date();
+        const validEndDate = endDate ? new Date(endDate) : new Date();
+
+        // Ajustar a data de início para 90 dias atrás
+        validStartDate.setDate(validStartDate.getDate() - 30);
+
+        // Consulta SQL para buscar saídas detalhadas no período especificado
+        const query = `
+            SELECT 
+                Des_ID, 
+                Des_Descricao, 
+                Des_Valor, 
+                Des_Data_Vencimento, 
+                Des_Data_Pagamento, 
+                Des_Parcelado, 
+                Des_Recorrente, 
+                Des_Qtd_Parcelas, 
+                Des_Tipo_Pagamento, 
+                Des_Pago, 
+                Des_Categoria, 
+                Des_Data_Cadastro 
+            FROM 
+                Despesa 
+            WHERE 
+                DELETED IS NULL
+                AND Des_Data_Pagamento >= $1
+                AND Des_Data_Pagamento <= $2;
+        `;
+
+        const result = await db_pg.any(query, [validStartDate, validEndDate]);
+
+        // Verificar se há resultados na resposta da consulta
+        if (result && result.length > 0) {
+            res.status(200).json(result);
+        } else {
+            // Caso não haja resultados, retornar uma mensagem indicando nenhum resultado
+            res.status(404).send("Nenhuma saída detalhada encontrada para o período especificado.");
+        }
+    } catch (error) {
+        res.status(500).send("Erro ao buscar saídas detalhadas: " + error.message);
+    }
 });
