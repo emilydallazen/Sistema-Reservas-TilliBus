@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { lightTheme, darkTheme } from './theme';
 import Dashboard from './components/Dashboard';
-import Users from './components/Users';
+import Clientes from './components/Clientes';
 import Settings from './components/Settings';
 import LoginPage from './pages/LoginPage';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -12,6 +12,8 @@ import MyCalendar from './components/MyCalendar';
 import Financeiro from './components/Financeiro';
 import MainLayout from './components/MainLayout';
 import Grafico from './components/Grafico';
+import 'bootstrap/dist/css/bootstrap.min.css'; // Adicione esta linha
+
 
 function App() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(true);
@@ -48,7 +50,7 @@ function App() {
           >
             <Route index element={<MyCalendar />} /> {/* Define a agenda como a página principal */}
             <Route path="Agenda" element={<MyCalendar />} />
-            <Route path="Cadastros" element={<Users />} />
+            <Route path="Clientes" element={<Clientes />} />
             <Route path="Dashboard" element={<Dashboard />} />
             <Route path="Financeiro" element={<Financeiro />} />
             <Route path="Grafico" element={<Grafico />} />

@@ -37,9 +37,9 @@ const Sidebar = ({ open, handleDrawerClose }) => {
           <ListItemIcon sx={{ color: '#fff' }}><CalendarIcon /></ListItemIcon>
           <ListItemText primary="Agenda" />
         </ListItem>
-        <ListItem button component={Link} to="/Cadastros">
+        <ListItem button component={Link} to="/Clientes">
           <ListItemIcon sx={{ color: '#fff' }}><CreateIcon /></ListItemIcon>
-          <ListItemText primary="Cadastros" />
+          <ListItemText primary="Clientes" />
         </ListItem>
         <ListItem button component={Link} to="/Financeiro">
           <ListItemIcon sx={{ color: '#fff' }}><AttachMoneyIcon /></ListItemIcon>

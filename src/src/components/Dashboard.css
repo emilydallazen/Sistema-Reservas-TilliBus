@@ -193,4 +193,46 @@ body {
     margin-bottom: 10px;
     font-weight: bold;
   }
+
+  /* Dashboard.css */
+
+.content {
+  padding: 20px;
+}
+
+.dashboard-container {
+  padding: 20px;
+}
+
+.dashboard {
+  margin-top: 20px;
+}
+
+.totals {
+  margin-bottom: 20px;
+}
+
+
+
+.detailsentries-card {
+  padding: 20px;
+  border-radius: 10px;
+  border: 2px solid #3b6e4e; /* Cor da borda dos cards */
+}
+.detailsexits-card {
+  padding: 20px;
+  border-radius: 10px;
+  border: 2px solid #8a4545; /* Cor da borda dos cards */
+}
+
+.details-card h6 {
+  margin-bottom: 10px;
+}
+
+@media (max-width: 600px) {
+  .totals {
+    flex-direction: column;
+  }
+}
+
   
