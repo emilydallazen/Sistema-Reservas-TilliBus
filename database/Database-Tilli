@@ -107,7 +107,7 @@ CREATE TABLE Despesa (
   Des_Descricao VARCHAR(255) NOT NULL,
   Des_Valor DECIMAL(10, 2) NOT NULL,
   Des_Data_Vencimento TIMESTAMP NOT NULL,
-  Des_Data_Pagamento TIMESTAMP NOT NULL,
+  Des_Data_Pagamento TIMESTAMP,
   Des_Parcelado BOOLEAN NOT NULL,
   Des_Recorrente BOOLEAN NOT NULL,
   Des_Qtd_Parcelas INT NOT NULL,
