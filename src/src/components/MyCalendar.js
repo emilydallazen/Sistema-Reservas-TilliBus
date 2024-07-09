@@ -15,24 +15,49 @@ const MyCalendar = () => {
     { title: 'Evento 2', date: '2024-06-22' }*/
   ]);
 
+  const [listaAdicionais, setAdicionaisList] = useState([]);
+  const [listaClientes, setClientesList] = useState([]);
+
   useEffect(() => {
-    // Função para buscar eventos da API
-    const fetchEvents = async () => {
-      try {
-        const response = await axios.get('/reservas');
-        const data = response.data;
-        const fetchedEvents = data.map(event => ({
-          title: event.res_descricao,
-          date: event.res_checkin
-        }));
-        setEvents(fetchedEvents);
-      } catch (error) {
-        console.error('Erro ao buscar eventos:', error);
-      }
-    };
-  
     fetchEvents();
   }, []);
+
+  const fetchEvents = async () => {
+    try {
+      const response = await axios.get('/reservas');
+      const data = response.data;
+      const fetchedEvents = data.map(event => ({
+        title: event.res_descricao,
+        start: event.res_checkin,
+        end: event.res_checkout,
+        id: event.res_id
+      }));
+      setEvents(fetchedEvents);
+    } catch (error) {
+      console.error('Erro ao buscar eventos:', error);
+    }
+  };
+
+  const fetchAdicionais = async () => {
+    try {
+      const response = await axios.get('/servicos');
+      const data = response.data;
+      setAdicionaisList(data);
+    } catch (error) {
+      console.error('Erro ao buscar adicionais:', error);
+    }
+  };
+
+  const fetchClientes = async () => {
+    try {
+      const response = await axios.get('/clientes');
+      const data = response.data;
+      setClientesList(data);
+    } catch (error) {
+      console.error('Erro ao buscar adicionais:', error);
+    }
+  };
+
 
   const [openModal, setOpenModal] = useState(false);
   const [eventData, setEventData] = useState({
@@ -75,6 +100,8 @@ const MyCalendar = () => {
 
   const [openBloqueioModal, setOpenBloqueioModal] = useState(false);
   const [bloqueioData, setBloqueioData] = useState({
+    hospedagemTilliBus: false,
+    hospedagemTinyHouse: false,
     dataInicio: '',
     dataFim: '',
     observacao: ''
@@ -88,6 +115,8 @@ const MyCalendar = () => {
       dataCheckIn: arg.dateStr,
       dataCheckOut: calculateCheckOutDate(arg.dateStr, eventData.quantidadeDiarias) // Calcula o Check Out automaticamente ao selecionar a data de Check In
     });
+    fetchAdicionais();
+    fetchClientes();
     setOpenModal(true);
   };
 
@@ -101,20 +130,95 @@ const MyCalendar = () => {
     return checkOut.toISOString().split('T')[0]; // Retorna no formato 'yyyy-mm-dd'
   };
 
-  const handleReservaSubmit = () => {
-    // Aqui você pode implementar a lógica para salvar a reserva
-    console.log('Dados da reserva:', eventData);
+  const handleReservaSubmit = async () => {
+    try {
+      const data = {
+        Res_Descricao: eventData.nomeReserva,
+        Res_CheckIn: eventData.dataCheckIn,
+        Res_CheckOut: eventData.dataCheckOut,
+        Res_Qtd_Diarias: eventData.quantidadeDiarias,
+        Res_Qtd_Adultos: eventData.quantidadeAdultos,
+        Res_Qtd_Criancas: eventData.quantidadeCriancas,
+        Res_Cliente: eventData.cliente,
+        Res_Status: 3,
+        Res_Observacao: eventData.observacao,
+        Res_Taxa_Limpeza: false
+      };
+  
+      if (eventData.hospedagemTilliBus) {
+        data.Res_Hospedagem = 1;
+      } else if (eventData.hospedagemTinyHouse) {
+        data.Res_Hospedagem = 2;
+      }
+  
+      const response = await axios.post('/reservas', data);
+      const reservaId = response.data.res_id;
+
+      // Envia os adicionais associados à reserva
+      for (const adicional of adicionais) {
+        const adicionalData = {
+          rse_reserva: reservaId,
+          rse_servico: adicional.descricao,
+          rse_quantidade: adicional.quantidade,
+          rse_observacao: adicional.observacao
+        };
+        await axios.post('/servreserva', adicionalData);
+      }
+  
+      console.log('Dados da reserva e adicionais enviados:', data, adicionais);
+      handleCloseModal();
+    } catch (error) {
+      console.error('Erro ao enviar reserva e adicionais:', error);
+    }
     handleCloseModal();
   };
+  
+  const handleClienteSubmit = async () => {
+    try {
+      const data = {
+        cli_cpf: clienteData.cpf,
+        cli_nome: clienteData.nome,
+        cli_celular: clienteData.telefone,
+        cli_estado: clienteData.endereco.estado,
+        cli_cidade: clienteData.endereco.cidade,
+        cli_logradouro: clienteData.endereco.logradouro,
+        cli_numero: clienteData.endereco.numero,
+        cli_complemento: null,
+        cli_email: clienteData.email,
+        cli_data_nascimento: clienteData.dataNascimento
+      };
 
-  const handleClienteSubmit = () => {
-    // Aqui você pode implementar a lógica para salvar o cliente
-    console.log('Dados do cliente:', clienteData);
+      await axios.post('/clientes', data);
+  
+      console.log('Dados do cliente enviados:', data, adicionais);
+      handleCloseModal();
+    } catch (error) {
+      console.error('Erro ao enviar cliente:', error);
+    }    
     handleCloseClienteModal();
   };
 
-  const handleBloqueioSubmit = () => {
-    // Aqui você pode implementar a lógica para salvar o bloqueio da agenda
+  const handleBloqueioSubmit = async () => {
+    try {
+      const data = {
+        Blo_Observacao: bloqueioData.observacao,
+        Blo_Data_Inicial: bloqueioData.dataInicio,
+        Blo_Data_Final: bloqueioData.dataFim
+      };
+
+      if (bloqueioData.hospedagemTilliBus) {
+        data.Blo_Hospedagem = 1;
+      } else if (bloqueioData.hospedagemTinyHouse) {
+        data.Blo_Hospedagem = 2;
+      }
+
+      await axios.post('/bloqueios', data);
+  
+      console.log('Bloqueio enviado:', data, adicionais);
+      handleCloseModal();
+    } catch (error) {
+      console.error('Erro ao enviar bloqueio:', error);
+    } 
     console.log('Dados do bloqueio:', bloqueioData);
     handleCloseBloqueioModal();
   };
@@ -134,6 +238,7 @@ const MyCalendar = () => {
       dataCheckOut: '' // Limpa também o campo de Check Out ao fechar o modal
     });
     setAdicionais([]);
+    fetchEvents();
   };
 
   const handleCloseClienteModal = () => {
@@ -156,6 +261,8 @@ const MyCalendar = () => {
   const handleCloseBloqueioModal = () => {
     setOpenBloqueioModal(false);
     setBloqueioData({
+      hospedagemTilliBus: false,
+      hospedagemTinyHouse: false,
       dataInicio: '',
       dataFim: '',
       observacao: ''
@@ -179,6 +286,22 @@ const MyCalendar = () => {
     } else {
       setEventData({
         ...eventData,
+        [name]: value
+      });
+    }
+  };
+
+  const handleBloqChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    if (name === 'hospedagemTilliBus' || name === 'hospedagemTinyHouse') {
+      setBloqueioData({
+        ...bloqueioData,
+        hospedagemTilliBus: name === 'hospedagemTilliBus' ? checked : false,
+        hospedagemTinyHouse: name === 'hospedagemTinyHouse' ? checked : false
+      });
+    } else {
+      setBloqueioData({
+        ...bloqueioData,
         [name]: value
       });
     }
@@ -277,8 +400,9 @@ const MyCalendar = () => {
                       onChange={handleInputChange}
                     >
                       {/* Aqui você pode adicionar opções de clientes existentes */}
-                      <MenuItem value="cliente1">Cliente 1</MenuItem>
-                      <MenuItem value="cliente2">Cliente 2</MenuItem>
+                      {listaClientes.map((listaClientes) => (
+                        <MenuItem key={listaClientes.cli_id} value={listaClientes.cli_id}>{listaClientes.cli_nome}</MenuItem>
+                      ))}
                     </Select>
                   </FormControl>
                 </Grid>
@@ -371,11 +495,9 @@ const MyCalendar = () => {
                   value={adicionalData.descricao}
                   onChange={handleAdicionalChange}
                 >
-                  <MenuItem value="Tábua de Frios P">Tábua de Frios P</MenuItem>
-                  <MenuItem value="Tábua de Frios G">Tábua de Frios G</MenuItem>
-                  <MenuItem value="Pacote Afetivo">Pacote Afetivo</MenuItem>
-                  <MenuItem value="Café da Manhã">Café da Manhã</MenuItem>
-                  <MenuItem value="Champagne no Gelo">Champagne no Gelo</MenuItem>
+                  {listaAdicionais.map((listaAdicionais) => (
+                    <MenuItem key={listaAdicionais.sad_id} value={listaAdicionais.sad_id}>{listaAdicionais.sad_descricao}</MenuItem>
+                  ))}
                 </Select>
               </FormControl>
 
@@ -549,6 +671,26 @@ const MyCalendar = () => {
       <Dialog open={openBloqueioModal} onClose={handleCloseBloqueioModal} fullWidth maxWidth="md">
         <DialogTitle>Bloquear Agenda</DialogTitle>
         <DialogContent>
+        <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={bloqueioData.hospedagemTilliBus}
+                    onChange={handleBloqChange}
+                    name="hospedagemTilliBus"
+                  />
+                }
+                label="TilliBus"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={bloqueioData.hospedagemTinyHouse}
+                    onChange={handleBloqChange}
+                    name="hospedagemTinyHouse"
+                  />
+                }
+                label="Tiny House"
+              />
           <Grid container spacing={2}>
             <Grid item xs={6}>
               <TextField

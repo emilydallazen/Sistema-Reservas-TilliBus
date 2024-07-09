@@ -218,7 +218,7 @@ app.get("/clientes/:id", requireJWTAuth, async function (req, res) {
 
 app.post("/clientes", requireJWTAuth, function (req, res) {
     db_pg.none("INSERT INTO cliente(cli_cpf, cli_nome, cli_celular, cli_estado, cli_cidade, cli_logradouro, cli_numero, cli_complemento, cli_email, cli_data_nascimento, deleted) \
-        VALUES ($1, $2, $3, $4, $5, $6, $8, $9, $10, $11, NULL);", 
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NULL);", 
         [req.body.cli_cpf, req.body.cli_nome, req.body.cli_celular, req.body.cli_estado, req.body.cli_cidade, req.body.cli_logradouro, req.body.cli_numero, req.body.cli_complemento, req.body.cli_email, req.body.cli_data_nascimento]).then(()=>{
         res.status(200).send("Cliente inserido!");
     }).catch(error => {
@@ -264,18 +264,20 @@ app.get("/reservas/:id", requireJWTAuth, async function (req, res) {
 });
 
 app.post("/reservas", requireJWTAuth, async function (req, res) {
-    let quantidade = await db_pg.one("SELECT hos_lim_hospedes FROM Hospedagem WHERE Hos_ID = $1 AND DELETED is NULL;", req.body.res_cliente);
+    let quantidade = await db_pg.one("SELECT hos_lim_hospedes FROM Hospedagem WHERE Hos_ID = $1 AND DELETED is NULL;", req.body.Res_Cliente);
     if(parseInt(req.body.res_qtd_adultos) > parseInt(quantidade)){
         res.status(500).send("A quantidade de adultos é maior que o limite da hospedagem.");
     }
-    let temBloqueio = await db_pg.any("Select 1 From Bloqueio Where Blo_Hospedagem = $1 And (Blo_Data_inicial <= $2 And Blo_Data_Final >= $3)", req.body.res_hospedagem, req.body.res_data_final, req.body.res_data_inicial);
+    let temBloqueio = await db_pg.any("Select 1 From Bloqueio Where Blo_Hospedagem = $1 And (Blo_Data_inicial <= $2 And Blo_Data_Final >= $3)", [req.body.Res_Hospedagem, req.body.Res_CheckIn, req.body.Res_CheckOut]);
     if(parseInt(temBloqueio) === 1){
         res.status(500).send("Existe um bloqueio cadastrado para esse período.");
     }
     db_pg.none("INSERT INTO Reserva (Res_Descricao, Res_Hospedagem, Res_CheckIn, Res_CheckOut, Res_Qtd_Diarias, Res_Qtd_Adultos, Res_Qtd_Criancas, Res_Cliente, Res_Status, Res_Observacao, Res_Taxa_Limpeza) VALUES \
     ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)", 
-    [req.body.Res_Descricao, req.body.Res_Hospedagem, req.body.Res_CheckIn, req.body.Res_CheckOut, req.body.Res_Qtd_Diarias, req.body.Res_Qtd_Adultos, req.body.Res_Qtd_Criancas, req.body.Res_Cliente, req.body.Res_Status, req.body.Res_Observacao, req.body.Res_Taxa_Limpeza]).then(()=>{
-        res.status(200).send("Reserva inserida!");
+    [req.body.Res_Descricao, req.body.Res_Hospedagem, req.body.Res_CheckIn, req.body.Res_CheckOut, req.body.Res_Qtd_Diarias, req.body.Res_Qtd_Adultos, req.body.Res_Qtd_Criancas, req.body.Res_Cliente, req.body.Res_Status, req.body.Res_Observacao, req.body.Res_Taxa_Limpeza]).then(async ()=>{
+        let data = await db_pg.one("SELECT * FROM Reserva Where Res_Hospedagem = $1 And Res_CheckIn = $2 And Res_CheckOut = $3", [req.body.Res_Hospedagem, req.body.Res_CheckIn, req.body.Res_CheckOut]);
+        
+        res.status(200).send(data);
     }).catch(error => {
         res.status(500).send("Erro ao inserir reserva: " + error.message); 
     });    
@@ -325,7 +327,7 @@ app.get("/bloqueios/:id", requireJWTAuth, async function (req, res) {
 
 app.post("/bloqueios", requireJWTAuth, function (req, res) {
     db_pg.none("INSERT INTO Bloqueio (Blo_Hospedagem, Blo_Observacao, Blo_Data_Inicial, Blo_Data_Final) VALUES\
-    ($1, $2, $3, $4);", [req.body.blo_hospedagem, req.body.Blo_Observacao, req.body.Blo_Data_Inicial, req.body.Blo_Data_Final]).then(()=>{
+    ($1, $2, $3, $4);", [req.body.Blo_Hospedagem, req.body.Blo_Observacao, req.body.Blo_Data_Inicial, req.body.Blo_Data_Final]).then(()=>{
         res.status(200).send("Bloqueio inserido!");
     }).catch(error => {
         res.status(500).send("Erro ao inserir bloqueio: " + error.message); 
@@ -563,8 +565,8 @@ app.get("/servreserva/:reserva", requireJWTAuth, async function (req, res) {
 
 app.post("/servreserva", requireJWTAuth, function (req, res) {
     db_pg.none("INSERT INTO reserva_servico (rse_reserva, rse_servico, rse_quantidade, rse_data_cadastro, rse_observacao) VALUES \
-    ($1, $2, $3, $4, $5)", 
-    [req.body.rse_reserva, req.body.rse_servico, req.body.rse_quantidade, req.body.rse_data_cadastro, req.body.rse_observacao]).then(()=>{
+    ($1, $2, $3, current_date::timestamp, $4)", 
+    [req.body.rse_reserva, req.body.rse_servico, req.body.rse_quantidade, req.body.rse_observacao]).then(()=>{
         res.status(200).send("Serviço inserido para a reserva!");
     }).catch(error => {
         res.status(500).send("Erro ao inserir serviço por reserva: " + error.message); 
