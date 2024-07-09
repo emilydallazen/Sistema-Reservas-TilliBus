@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
+import axios from 'axios';
 import {
   Container,
   Typography,
@@ -29,6 +30,8 @@ import {
 
 const Financeiro = () => {
   const [open, setOpen] = useState(false);
+  const [contasAPagar, setContasAPagar] = useState([]);
+  const [contasPagas, setContasPagas] = useState([]);
   const [formData, setFormData] = useState({
     descricao: '',
     valor: '',
@@ -40,7 +43,27 @@ const Financeiro = () => {
     tipoDespesa: ''
   });
 
+  useEffect(() => {
+    fetchDespesas();
+  }, []);
+
   const [tabValue, setTabValue] = useState(0);
+
+  const fetchDespesas = async () => {
+    try {
+      const response = await axios.get('/despesas');
+      const data = response.data;
+      console.log(data)
+      if (Array.isArray(data)) {
+        const despesasPagas = data.filter(despesa => despesa.des_pago === true);
+        const despesasAPagar = data.filter(despesa => despesa.des_pago === false);
+        setContasAPagar(despesasAPagar);
+        setContasPagas(despesasPagas);
+      }
+    } catch (error) {
+      console.error('Erro ao buscar despesas:', error);
+    }
+  };
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -53,26 +76,34 @@ const Financeiro = () => {
     });
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     // Lógica para salvar a nova conta a pagar
+    try {
+      const data = {
+        Des_Descricao: formData.descricao,
+        Des_Valor: formData.valor,
+        Des_Data_Vencimento: formData.dataVencimento,
+        Des_Parcelado: formData.parcelado,
+        Des_Recorrente: false,
+        Des_Qtd_Parcelas: formData.numeroParcelas,
+        Des_Tipo_Pagamento: formData.formaPagamento,
+        Des_Pago: false,
+        Des_Categoria: formData.tipoDespesa
+      };
+
+      await axios.post('/despesas', data);
+  
+    } catch (error) {
+      console.error('Erro ao enviar despesa:', error);
+    }
     console.log('Dados da nova conta:', formData);
     handleClose();
   };
 
-  const contasAPagar = [
-    { id: 1, descricao: 'Conta de Luz', data: '2024-06-01', valor: 150.00 },
-    { id: 2, descricao: 'Conta de Água', data: '2024-06-05', valor: 80.00 },
-    { id: 3, descricao: 'Internet', data: '2024-06-10', valor: 100.00 },
-  ];
-
-  const contasPagas = [
-    { id: 1, descricao: 'Aluguel', dataVencimento: '2024-05-01', dataBaixa: '2024-05-02', valor: 1200.00 },
-    { id: 2, descricao: 'Telefone', dataVencimento: '2024-05-10', dataBaixa: '2024-05-11', valor: 90.00 },
-    { id: 3, descricao: 'Internet', dataVencimento: '2024-05-15', dataBaixa: '2024-05-16', valor: 100.00 },
-  ];
 
   const calcularTotalContas = (contas) => {
-    return contas.reduce((total, conta) => total + conta.valor, 0).toFixed(2);
+    const total = contas.reduce((total, conta) => total + parseFloat(conta.des_valor), 0);
+    return total.toFixed(2);
   };
 
   const handleTabChange = (event, newValue) => {
@@ -125,13 +156,13 @@ const Financeiro = () => {
               </TableHead>
               <TableBody>
                 {contasAPagar.map((conta) => (
-                  <TableRow key={conta.id}>
+                  <TableRow key={conta.des_id}>
                     <TableCell>
                       <Checkbox />
                     </TableCell>
-                    <TableCell>{conta.descricao}</TableCell>
-                    <TableCell>{conta.data}</TableCell>
-                    <TableCell>{conta.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</TableCell>
+                    <TableCell>{conta.des_descricao}</TableCell>
+                    <TableCell>{conta.des_data_vencimento}</TableCell>
+                    <TableCell>{conta.des_valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</TableCell>
                     <TableCell align="right">
                       <Button variant="contained" color="primary" size="small" sx={{ mr: 1 }}>Editar</Button>
                       <Button variant="contained" color="secondary" size="small">Dar Baixa</Button>
@@ -160,11 +191,11 @@ const Financeiro = () => {
               </TableHead>
               <TableBody>
                 {contasPagas.map((conta) => (
-                  <TableRow key={conta.id}>
-                    <TableCell>{conta.descricao}</TableCell>
-                    <TableCell>{conta.dataVencimento}</TableCell>
-                    <TableCell>{conta.dataBaixa}</TableCell>
-                    <TableCell>{conta.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</TableCell>
+                  <TableRow key={conta.des_id}>
+                    <TableCell>{conta.des_descricao}</TableCell>
+                    <TableCell>{conta.des_data_vencimento}</TableCell>
+                    <TableCell>{conta.des_data_pagamento}</TableCell>
+                    <TableCell>{conta.des_valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -241,10 +272,10 @@ const Financeiro = () => {
                   value={formData.formaPagamento}
                   onChange={handleChange}
                 >
-                  <MenuItem value="dinheiro">Dinheiro</MenuItem>
-                  <MenuItem value="pix">Pix</MenuItem>
-                  <MenuItem value="debito">Débito</MenuItem>
-                  <MenuItem value="credito">Crédito</MenuItem>
+                  <MenuItem value="1">Dinheiro</MenuItem>
+                  <MenuItem value="2">Pix</MenuItem>
+                  <MenuItem value="3">Débito</MenuItem>
+                  <MenuItem value="4">Crédito</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
@@ -257,10 +288,10 @@ const Financeiro = () => {
                   value={formData.tipoDespesa}
                   onChange={handleChange}
                 >
-                  <MenuItem value="alimentacao">Alimentação</MenuItem>
-                  <MenuItem value="transporte">Transporte</MenuItem>
-                  <MenuItem value="moradia">Moradia</MenuItem>
-                  <MenuItem value="outros">Outros</MenuItem>
+                  <MenuItem value="1">Alimentação</MenuItem>
+                  <MenuItem value="2">Transporte</MenuItem>
+                  <MenuItem value="3">Moradia</MenuItem>
+                  <MenuItem value="4">Outros</MenuItem>
                 </Select>
               </FormControl>
             </Grid>

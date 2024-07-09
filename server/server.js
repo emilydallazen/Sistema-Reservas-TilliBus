@@ -372,8 +372,8 @@ app.get("/despesas/:id", requireJWTAuth, async function (req, res) {
 
 app.post("/despesas", requireJWTAuth, function (req, res) {
     db_pg.none("INSERT INTO Despesa (Des_Descricao, Des_Valor, Des_Data_Vencimento, Des_Data_Pagamento, Des_Parcelado, Des_Recorrente, Des_Qtd_Parcelas, Des_Tipo_Pagamento, Des_Pago, Des_Categoria) VALUES \
-    ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)", 
-    [req.body.Des_Descricao, req.body.Des_Valor, req.body.Des_Data_Vencimento, req.body.Des_Data_Pagamento, req.body.Des_Parcelado, req.body.Des_Recorrente, req.body.Des_Qtd_Parcelas, req.body.Des_Tipo_Pagamento, req.body.Des_Pago, req.body.Des_Categoria]).then(()=>{
+    ($1, $2, $3, current_date::timestamp, $4, $5, $6, $7, $8, $9)", 
+    [req.body.Des_Descricao, req.body.Des_Valor, req.body.Des_Data_Vencimento, req.body.Des_Parcelado, req.body.Des_Recorrente, req.body.Des_Qtd_Parcelas, req.body.Des_Tipo_Pagamento, req.body.Des_Pago, req.body.Des_Categoria]).then(()=>{
         res.status(200).send("Despesa inserida!");
     }).catch(error => {
         res.status(500).send("Erro ao inserir despesa: " + error.message); 
